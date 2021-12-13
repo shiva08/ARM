@@ -101,7 +101,7 @@
             "value": "DomainAdmin"
         },
         "adminPassword": {
-            "value": null
+            "value": "Contoso!0000"
         },
         "patchMode": {
             "value": "AutomaticByOS"
