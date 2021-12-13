@@ -9,13 +9,13 @@
             "value": "AutoVM"
         },
         "domainJoinUserName": {
-            "value": "contoso\\username"
+            "value": "CORP\\DomainAdmin"
         },
         "domainJoinUserPassword": {
-            "value": "GEN-PASSWORD"
+            "value": "Contoso!0000"
         },
         "domainFQDN": {
-            "value": "contoso.com"
+            "value": "corp.contoso.com"
         }
     }
 }
