@@ -6,7 +6,7 @@
             "value": "eastus"
         },
         "vmList": {
-            "value": "AutoVM1"
+            "value": "AutoVM"
         },
         "domainJoinUserName": {
             "value": "CORP\\DomainAdmin"
