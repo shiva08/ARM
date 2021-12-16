@@ -6,13 +6,13 @@
             "value": "eastus"
         },
         "networkInterfaceName": {
-            "value": "autovm994"
+            "value": "autovm1994"
         },
         "enableAcceleratedNetworking": {
             "value": true
         },
         "networkSecurityGroupName": {
-            "value": "AutoVM-nsg"
+            "value": "AutoVM1-nsg"
         },
         "networkSecurityGroupRules": {
             "value": []
@@ -24,7 +24,7 @@
             "value": "/subscriptions/0009fc4d-e310-4e40-8e63-c48a23e9cdc1/resourceGroups/SQL-HA-RG/providers/Microsoft.Network/virtualNetworks/SQLHAVNET"
         },
         "publicIpAddressName": {
-            "value": "AutoVM-ip"
+            "value": "AutoVM1-ip"
         },
         "publicIpAddressType": {
             "value": "Dynamic"
@@ -33,10 +33,10 @@
             "value": "Basic"
         },
         "virtualMachineName": {
-            "value": "AutoVM"
+            "value": "AutoVM1"
         },
         "virtualMachineComputerName": {
-            "value": "AutoVM"
+            "value": "AutoVM1"
         },
         "virtualMachineRG": {
             "value": "SQL-HA-RG"
@@ -52,7 +52,7 @@
                     "caching": "ReadOnly",
                     "writeAcceleratorEnabled": false,
                     "id": null,
-                    "name": "AutoVM_DataDisk_0",
+                    "name": "AutoVM1_DataDisk_0",
                     "storageAccountType": null,
                     "diskSizeGB": null,
                     "diskEncryptionSet": null
@@ -63,7 +63,7 @@
                     "caching": "None",
                     "writeAcceleratorEnabled": false,
                     "id": null,
-                    "name": "AutoVM_DataDisk_1",
+                    "name": "AutoVM1_DataDisk_1",
                     "storageAccountType": null,
                     "diskSizeGB": null,
                     "diskEncryptionSet": null
@@ -73,7 +73,7 @@
         "dataDiskResources": {
             "value": [
                 {
-                    "name": "AutoVM_DataDisk_0",
+                    "name": "AutoVM1_DataDisk_0",
                     "sku": "Premium_LRS",
                     "properties": {
                         "diskSizeGB": 1024,
@@ -83,7 +83,7 @@
                     }
                 },
                 {
-                    "name": "AutoVM_DataDisk_1",
+                    "name": "AutoVM1_DataDisk_1",
                     "sku": "Premium_LRS",
                     "properties": {
                         "diskSizeGB": 1024,
@@ -113,7 +113,7 @@
             "value": "eastus"
         },
         "sqlVirtualMachineName": {
-            "value": "AutoVM"
+            "value": "AutoVM1"
         },
         "sqlConnectivityType": {
             "value": "Private"
