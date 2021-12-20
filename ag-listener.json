@@ -105,7 +105,7 @@
                   "copy": [
                             {
                               "name": "Replicas",
-                              "count": "[length(variables('VmArray'))]]",
+                              "count": "[length(variables('VmArray'))]",
                               "input": {
                                   "sqlVirtualMachineInstanceId": "[variables('VmArray')[copyIndex()]]",
                                   "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
