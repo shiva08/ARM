@@ -130,11 +130,5 @@
                 "Port": "[parameters('ListenerPort')]"
             }
         }
-    ],
-   "outputs": {
-    "nameResult": {
-      "type": "array",
-      "value": "variables('SqlVmResourceIdList')"
-    }
-  }
+    ]
 }
