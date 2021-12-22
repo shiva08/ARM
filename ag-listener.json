@@ -107,7 +107,7 @@
                               "name": "Replicas",
                               "count": "[length(variables('VmArray'))]",
                               "input": {
-                                  "sqlVirtualMachineInstanceId": "[variables('VmArray')[copyIndex('Replicas')]]",
+                                  "sqlVirtualMachineInstanceId": "[variables(concat('VM',copyIndex('Replicas'))]",
                                   "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
                                   "failover": "Automatic",
                                   "commit": " Synchronous_Commit ",
