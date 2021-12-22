@@ -107,7 +107,7 @@
                               "name": "Replicas",
                               "count": "[length(variables('VmArray'))]",
                               "input": {
-                                  "sqlVirtualMachineInstanceId": "[split(variables('SqlVmResourceIdList'),',')[copyIndex('Replicas')]]",
+                                  "sqlVirtualMachineInstanceId": "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
                                   "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
                                   "failover": "Automatic",
                                   "commit": " Synchronous_Commit ",
@@ -130,5 +130,11 @@
                 "Port": "[parameters('ListenerPort')]"
             }
         }
-    ]
+    ],
+   "outputs": {
+    "nameResult": {
+      "type": "array",
+      "value": "variables('SqlVmResourceIdList')"
+    }
+  }
 }
