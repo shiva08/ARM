@@ -107,11 +107,11 @@
                               "name": "Replicas",
                               "count": "[length(variables('VmArray'))]",
                               "input": {
-                                  "sqlVirtualMachineInstanceId": "[split(variables('SqlVmResourceIdList'),',')[copyIndex('Replicas')]]",
-                                  "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
+                                  "sqlVirtualMachineInstanceId": "[split(variables('SqlVmResourceIdList'),',')[copyIndex()]]",
+                                  "role": "[if(equals(copyIndex(),0), 'Primary', 'Secondary')]",
                                   "failover": "Automatic",
                                   "commit": " Synchronous_Commit ",
-                                  "readableSecondary": "[if(equals(copyIndex('Replicas'),0), 'Read_Only', 'All')]"
+                                  "readableSecondary": "[if(equals(copyIndex(),0), 'Read_Only', 'All')]"
                               }
                             }
                           ]
