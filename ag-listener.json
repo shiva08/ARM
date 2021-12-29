@@ -110,8 +110,8 @@
                                   "sqlVirtualMachineInstanceId": "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
                                   "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
                                   "failover": "Automatic",
-                                  "commit": " Synchronous_Commit ",
-                                  "readableSecondary": "[if(equals(copyIndex('Replicas'),0), 'Read_Only', 'All')]"
+                                  "commit": "Synchronous_Commit",
+                                  "readableSecondary": "All"
                               }
                             }
                           ]
