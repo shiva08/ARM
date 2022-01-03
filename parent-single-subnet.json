@@ -153,7 +153,6 @@
                },
                "virtualNetworkId":{
                   "value" : "[concat('/subscriptions/',parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
-                  // "value":"/subscriptions/0009fc4d-e310-4e40-8e63-c48a23e9cdc1/resourceGroups/SQL-HA-RG/providers/Microsoft.Network/virtualNetworks/SQLHAVNET1"
                },
                "publicIpAddressName":{
                   "value":"[concat(parameters('vmprefix'),copyIndex(),'-ip')]"
