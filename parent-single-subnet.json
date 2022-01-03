@@ -108,6 +108,15 @@
       }
    },
    "variables":{
+      
+     "copy": [
+               {
+                "name": "vmArray",
+                "count": "[parameters('vmcount')]",
+                "input": "[concat('item', copyIndex('vmArray'))]"
+               }
+            ],
+      "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
       "CreateSQLVMTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
       "JoinDomainTemplateUri" : "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
       "AGPrerequisitesTemplateUri" : "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
@@ -319,7 +328,7 @@
                   "value": "[parameters('location')]"
                },
                "vmList":{
-                  "value":"autom0,autom1,autom2"
+                  "value": "[variables('vmList')]"
                },
                "domainJoinUserName":{
                   "value": "[concat(parameters('domainJoinUserName'),'\\',parameters('adminUsername'))]"
@@ -351,7 +360,7 @@
                   "value":  "[parameters('failoverClusterName')]"
                },
                "existingVmList":{
-                  "value":"autom0,autom1,autom2"
+                  "value": "[variables('vmList')]"
                },
                "sqlServerLicenseType":{
                   "value": "[parameters('sqlServerLicenseType')]"
@@ -427,7 +436,7 @@
                   "value": "[parameters('existingSqlAvailabilityGroup')]"
                },
                "existingVmList":{
-                  "value":"autom0,autom1,autom2"
+                  "value": "[variables('vmList')]"
                },
                "existingVnet":{
                   "value": "[parameters('virtualNetwork')]"
