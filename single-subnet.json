@@ -20,7 +20,7 @@
       },
       "vmprefix":{
          "type":"string",
-         "defaultValue":"autom"
+         "defaultValue":"autovm"
       },
       "sqlServerLicenseType":{
          "type":"string",
