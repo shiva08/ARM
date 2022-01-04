@@ -112,7 +112,7 @@
                {
                 "name": "vmArray",
                 "count": "[parameters('vmcount')]",
-                "input": "[concat('item', copyIndex('vmArray'))]"
+                "input": "[concat(parameters('vmprefix'), copyIndex('vmArray'))]"
                }
             ],
       "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
