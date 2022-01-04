@@ -118,7 +118,16 @@
         },
         "rServicesEnabled": {
             "type": "string"
-        }
+        },
+        "sqlServerImageType":{
+            "type" : "string"
+        },
+        "sqlServerLicenseType":{
+            "type":"string"
+        },
+        "sqlServerSku":{
+             "type":"string"
+        }  
     },
     "variables": {
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
@@ -213,8 +222,8 @@
                     },
                     "imageReference": {
                         "publisher": "MicrosoftSQLServer",
-                        "offer": "SQL2016SP2-WS2016",
-                        "sku": "Enterprise",
+                        "offer": "[parameters('sqlServerImageType')]", 
+                        "sku": "[parameters('sqlServerSku')]",
                         "version": "latest"
                     },
                     "copy": [
@@ -270,7 +279,7 @@
             "properties": {
                 "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]",
                 "sqlManagement": "Full",
-                "SqlServerLicenseType": "PAYG",
+                "SqlServerLicenseType": "[parameters('sqlServerLicenseType')]",
                 "AutoPatchingSettings": {
                     "Enable": true,
                     "DayOfWeek": "[parameters('sqlAutopatchingDayOfWeek')]",
