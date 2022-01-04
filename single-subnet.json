@@ -123,7 +123,7 @@
       "CreateSQLVMTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
       "JoinDomainTemplateUri" : "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
       "AGPrerequisitesTemplateUri" : "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
-      "LoadBalancerTemplateuri" : "https://raw.githubusercontent.com/shiva08/ARM/main/load-balancer.json",
+      "LoadBalancerTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/load-balancer.json",
       "AGListenerTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/ag-listener.json"
    },
    "resources":[
@@ -408,7 +408,7 @@
          "properties":{
             "mode":"Incremental",
             "templateLink":{
-               "uri": "[variables('LoadBalancerTemplateuri')]",
+               "uri": "[variables('LoadBalancerTemplateUri')]",
                "contentVersion":"1.0.0.0"
             },
             "parameters": {
