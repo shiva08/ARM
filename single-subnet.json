@@ -30,6 +30,10 @@
          "type":"string",
          "defaultValue":"SQL2016-WS2016"
       },
+      "sqlServerSku":{
+         "type":"string",
+         "defaultValue":"Enterprise"
+      },
       // "existingSqlServiceAccount":{
       //    "type":"string",
       //    "defaultValue":"DomainAdmin@corp.contoso.com"
@@ -139,6 +143,15 @@
                "contentVersion":"1.0.0.0"
             },
             "parameters":{
+               "sqlServerSku":{
+                   "value": "[parameters('sqlServerSku')]"
+               },
+               "sqlServerImageType":{
+                   "value": "[parameters('sqlServerImageType')]"
+               },
+               "sqlServerLicenseType":{
+                   "value": "[parameters('sqlServerLicenseType')]"
+               },
                "location":{
                   "value": "[parameters('location')]"
                },
