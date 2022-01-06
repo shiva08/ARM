@@ -127,7 +127,10 @@
         },
         "sqlServerSku":{
              "type":"string"
-        }  
+        },
+        "sqlServerImagePublisher": {
+            "type" : "string"
+        }
     },
     "variables": {
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
@@ -221,7 +224,7 @@
                         }
                     },
                     "imageReference": {
-                        "publisher": "MicrosoftSQLServer",
+                        "publisher": "[parameters('sqlServerImagePublisher')]",
                         "offer": "[parameters('sqlServerImageType')]", 
                         "sku": "[parameters('sqlServerSku')]",
                         "version": "latest"
