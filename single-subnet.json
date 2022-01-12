@@ -167,7 +167,7 @@
          {
             "name":"subnetIPAddressArray",
             "count":"[parameters('vmcount')]",
-            "input":"[concat(variables('AddressRangeArray')[0], '.', variables('AddressRangeArray')[1], '.',  copyIndex('subnetIPAddressArray', 5), '.', variables('AddressRangeArray')[3], '/', string(parameters('subnetClassBits')) ) ]"
+            "input":"[format('{0}.{1}.{2}.{3}/{4}', variables('AddressRangeArray')[0], variables('AddressRangeArray')[1], copyIndex('subnetIPAddressArray', 5), variables('AddressRangeArray')[3], string(parameters('subnetClassBits')) ) ]"
          }
       ],
 
