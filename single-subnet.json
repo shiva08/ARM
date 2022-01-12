@@ -266,8 +266,8 @@
                   ]
                },
                "subnetName":{
-                  "value":"[variables('subnetArray')[copyIndex()]]"
-                  // "value": "[parameters('subnetNameForAG')]"
+                  // "value":"[variables('subnetArray')[copyIndex()]]"
+                  "value": "[parameters('subnetNameForAG')]"
                },
                "virtualNetworkId":{
                   "value":"[concat('/subscriptions/',parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
