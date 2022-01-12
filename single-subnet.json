@@ -2,17 +2,17 @@
    "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
    "contentVersion":"1.0.0.0",
    "parameters":{
-      "resourceGroup" : {
-         "type" : "string",
-         "defaultValue" : "[resourceGroup().name]"
+      "resourceGroup":{
+         "type":"string",
+         "defaultValue":"[resourceGroup().name]"
       },
-      "subscriptionId": {
-         "type": "string",
-         "defaultValue": "[subscription().subscriptionId]"
+      "subscriptionId":{
+         "type":"string",
+         "defaultValue":"[subscription().subscriptionId]"
       },
-      "virtualNetwork" : {
-         "type" : "string",
-         "defaultValue" : "SQLHAVNET1"
+      "virtualNetwork":{
+         "type":"string",
+         "defaultValue":"SQLHAVNET1"
       },
       "vmcount":{
          "type":"int",
@@ -28,11 +28,15 @@
       },
       "sqlServerImageType":{
          "type":"string",
-         "defaultValue":"SQL2016-WS2016"
+         "defaultValue":"SQL2016SP2-WS2016"
       },
       "sqlServerSku":{
          "type":"string",
          "defaultValue":"Enterprise"
+      },
+      "sqlServerImagePublisher":{
+         "type":"string",
+         "defaultValue":"MicrosoftSQLServer"
       },
       // "existingSqlServiceAccount":{
       //    "type":"string",
@@ -44,30 +48,30 @@
       // },
       "location":{
          "type":"string",
-         "defaultValue": "[resourceGroup().location]"
+         "defaultValue":"[resourceGroup().location]"
       },
-      "adminUsername" : {
-         "type" : "string",
-         "defaultValue" : "DomainAdmin"
+      "adminUsername":{
+         "type":"string",
+         "defaultValue":"DomainAdmin"
       },
       "adminPassword":{
          "type":"string",
          "defaultValue":"Contoso!0000"
       },
-      "subnetName" : {
-         "type" : "string",
-         "defaultValue" : "DC-subnet"
+      "subnetNameForAG":{
+         "type":"string",
+         "defaultValue":"DC-subnet"
       },
       "publicIpAddressType":{
-         "type" : "string",
+         "type":"string",
          "defaultValue":"Static"
       },
       "publicIpAddressSku":{
-         "type" : "string",
+         "type":"string",
          "defaultValue":"Standard"
       },
       "virtualMachineSize":{
-         "type" : "string",
+         "type":"string",
          "defaultValue":"Standard_D2s_v3"
       },
       "existingFullyQualifiedDomainName":{
@@ -84,47 +88,51 @@
       },
       "failoverClusterName":{
          "type":"string",
-         "defaultValue":"autofb"
+         "defaultValue":"autofc"
       },
-      "loadBalancerName": {
-         "type" :"string",
-         "defaultValue" : "autoloadb"
+      "failoverSQLServerImageType":{
+         "type":"string",
+         "defaultValue":"SQL2016-WS2016"
       },
-      "loadBalancerSku": {
-         "type" : "string",
-         "defaultValue": "Standard"
+      "loadBalancerName":{
+         "type":"string",
+         "defaultValue":"autoloadc"
       },
-      "loadBalancerTier": {
-         "type" : "string",
-         "defaultValue": "Regional"
+      "loadBalancerSku":{
+         "type":"string",
+         "defaultValue":"Standard"
+      },
+      "loadBalancerTier":{
+         "type":"string",
+         "defaultValue":"Regional"
       },
       "existingSqlAvailabilityGroup":{
-         "type" : "string",
-         "defaultValue":"autoaggroupb" 
+         "type":"string",
+         "defaultValue":"autoaggroupc"
       },
-      "ListenerIp": {
-         "type" : "string",
-         "defaultValue" : "10.0.0.22"  
+      "ListenerIp":{
+         "type":"string",
+         "defaultValue":"10.0.0.22"
       },
-      "ListenerName": {
-         "type": "string",
-         "defaultValue": "autoaglistenerb"
+      "ListenerName":{
+         "type":"string",
+         "defaultValue":"autoaglistenerc"
       }
    },
    "variables":{
-     "copy": [
-               {
-                "name": "vmArray",
-                "count": "[parameters('vmcount')]",
-                "input": "[concat(parameters('vmprefix'), copyIndex('vmArray'))]"
-               }
-            ],
-      "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
-      "CreateSQLVMTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
-      "JoinDomainTemplateUri" : "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
-      "AGPrerequisitesTemplateUri" : "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
-      "LoadBalancerTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/load-balancer.json",
-      "AGListenerTemplateUri" : "https://raw.githubusercontent.com/shiva08/ARM/main/ag-listener.json"
+      "copy":[
+         {
+            "name":"vmArray",
+            "count":"[parameters('vmcount')]",
+            "input":"[concat(parameters('vmprefix'), '-', copyIndex('vmArray'))]"
+         }
+      ],
+      "vmList":"[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
+      "CreateSQLVMTemplateUri":"https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
+      "JoinDomainTemplateUri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
+      "AGPrerequisitesTemplateUri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
+      "LoadBalancerTemplateUri":"https://raw.githubusercontent.com/shiva08/ARM/main/load-balancer.json",
+      "AGListenerTemplateUri":"https://raw.githubusercontent.com/shiva08/ARM/main/ag-listener.json"
    },
    "resources":[
       {
@@ -139,30 +147,33 @@
          "properties":{
             "mode":"Incremental",
             "templateLink":{
-               "uri": "[variables('CreateSQLVMTemplateUri')]",
+               "uri":"[variables('CreateSQLVMTemplateUri')]",
                "contentVersion":"1.0.0.0"
             },
             "parameters":{
                "sqlServerSku":{
-                   "value": "[parameters('sqlServerSku')]"
+                  "value":"[parameters('sqlServerSku')]"
+               },
+               "sqlServerImagePublisher":{
+                  "value":"[parameters('sqlServerImagePublisher')]"
                },
                "sqlServerImageType":{
-                   "value": "[parameters('sqlServerImageType')]"
+                  "value":"[parameters('sqlServerImageType')]"
                },
                "sqlServerLicenseType":{
-                   "value": "[parameters('sqlServerLicenseType')]"
+                  "value":"[parameters('sqlServerLicenseType')]"
                },
                "location":{
-                  "value": "[parameters('location')]"
+                  "value":"[parameters('location')]"
                },
                "networkInterfaceName":{
-                  "value":"[concat(parameters('vmprefix'),copyIndex(),'-ni')]"
+                  "value":"[concat(variables('vmArray')[copyIndex()],'-ni')]"
                },
                "enableAcceleratedNetworking":{
                   "value":true
                },
                "networkSecurityGroupName":{
-                  "value":"[concat(parameters('vmprefix'),copyIndex(),'-nsg')]"
+                  "value":"[concat(variables('vmArray')[copyIndex()],'-nsg')]"
                },
                "networkSecurityGroupRules":{
                   "value":[
@@ -170,28 +181,28 @@
                   ]
                },
                "subnetName":{
-                  "value": "[parameters('subnetName')]"
+                  "value": "[parameters('subnetNameForAG')]"
                },
                "virtualNetworkId":{
-                  "value" : "[concat('/subscriptions/',parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
+                  "value":"[concat('/subscriptions/',parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
                },
                "publicIpAddressName":{
-                  "value":"[concat(parameters('vmprefix'),copyIndex(),'-ip')]"
+                  "value":"[concat(variables('vmArray')[copyIndex()],'-ip')]"
                },
                "publicIpAddressType":{
-                  "value": "[parameters('publicIpAddressType')]"
+                  "value":"[parameters('publicIpAddressType')]"
                },
                "publicIpAddressSku":{
-                  "value": "[parameters('publicIpAddressSku')]"
+                  "value":"[parameters('publicIpAddressSku')]"
                },
                "virtualMachineName":{
-                  "value":"[concat(parameters('vmprefix'),copyIndex())]"
+                  "value":"[variables('vmArray')[copyIndex()]]"
                },
                "virtualMachineComputerName":{
-                  "value":"[concat(parameters('vmprefix'),copyIndex())]"
+                  "value":"[variables('vmArray')[copyIndex()]]"
                },
                "virtualMachineRG":{
-                  "value": "[parameters('resourceGroup')]"
+                  "value":"[parameters('resourceGroup')]"
                },
                "osDiskType":{
                   "value":"Premium_LRS"
@@ -204,7 +215,7 @@
                         "caching":"ReadOnly",
                         "writeAcceleratorEnabled":false,
                         "id":null,
-                        "name":"[concat(parameters('vmprefix'),copyIndex(), '_DataDisk_0')]",
+                        "name":"[concat(variables('vmArray')[copyIndex()], '_DataDisk_0')]",
                         "storageAccountType":null,
                         "diskSizeGB":null,
                         "diskEncryptionSet":null
@@ -215,7 +226,7 @@
                         "caching":"None",
                         "writeAcceleratorEnabled":false,
                         "id":null,
-                        "name":"[concat(parameters('vmprefix'),copyIndex(), '_DataDisk_1')]",
+                        "name":"[concat(variables('vmArray')[copyIndex()], '_DataDisk_1')]",
                         "storageAccountType":null,
                         "diskSizeGB":null,
                         "diskEncryptionSet":null
@@ -225,7 +236,7 @@
                "dataDiskResources":{
                   "value":[
                      {
-                        "name":"[concat(parameters('vmprefix'),copyIndex(), '_DataDisk_0')]",
+                        "name":"[concat(variables('vmArray')[copyIndex()], '_DataDisk_0')]",
                         "sku":"Premium_LRS",
                         "properties":{
                            "diskSizeGB":1024,
@@ -235,7 +246,7 @@
                         }
                      },
                      {
-                        "name":"[concat(parameters('vmprefix'),copyIndex(), '_DataDisk_1')]",
+                        "name":"[concat(variables('vmArray')[copyIndex()], '_DataDisk_1')]",
                         "sku":"Premium_LRS",
                         "properties":{
                            "diskSizeGB":1024,
@@ -247,13 +258,13 @@
                   ]
                },
                "virtualMachineSize":{
-                  "value": "[parameters('virtualMachineSize')]"
+                  "value":"[parameters('virtualMachineSize')]"
                },
                "adminUsername":{
-                  "value": "[parameters('adminUsername')]"
+                  "value":"[parameters('adminUsername')]"
                },
                "adminPassword":{
-                  "value": "[parameters('adminPassword')]"
+                  "value":"[parameters('adminPassword')]"
                },
                "patchMode":{
                   "value":"AutomaticByOS"
@@ -262,10 +273,10 @@
                   "value":false
                },
                "sqlVirtualMachineLocation":{
-                  "value": "[parameters('location')]"
+                  "value":"[parameters('location')]"
                },
                "sqlVirtualMachineName":{
-                  "value":"[concat(parameters('vmprefix'),copyIndex())]"
+                  "value":"[variables('vmArray')[copyIndex()]]"
                },
                "sqlConnectivityType":{
                   "value":"Private"
@@ -332,24 +343,24 @@
          "properties":{
             "mode":"Incremental",
             "templateLink":{
-               "uri": "[variables('JoinDomainTemplateUri')]",
+               "uri":"[variables('JoinDomainTemplateUri')]",
                "contentVersion":"1.0.0.0"
             },
             "parameters":{
                "location":{
-                  "value": "[parameters('location')]"
+                  "value":"[parameters('location')]"
                },
                "vmList":{
-                  "value": "[variables('vmList')]"
+                  "value":"[variables('vmList')]"
                },
                "domainJoinUserName":{
-                  "value": "[concat(parameters('domainJoinUserName'),'\\',parameters('adminUsername'))]"
+                  "value":"[concat(parameters('domainJoinUserName'),'\\',parameters('adminUsername'))]"
                },
                "domainJoinUserPassword":{
-                  "value": "[parameters('adminPassword')]"
+                  "value":"[parameters('adminPassword')]"
                },
                "domainFQDN":{
-                  "value": "[parameters('domainFQDN')]"
+                  "value":"[parameters('domainFQDN')]"
                }
             }
          }
@@ -364,36 +375,36 @@
          "properties":{
             "mode":"Incremental",
             "templateLink":{
-               "uri": "[variables('AGPrerequisitesTemplateUri')]",
+               "uri":"[variables('AGPrerequisitesTemplateUri')]",
                "contentVersion":"1.0.0.0"
             },
             "parameters":{
                "failoverClusterName":{
-                  "value":  "[parameters('failoverClusterName')]"
+                  "value":"[parameters('failoverClusterName')]"
                },
                "existingVmList":{
-                  "value": "[variables('vmList')]"
+                  "value":"[variables('vmList')]"
                },
                "sqlServerLicenseType":{
-                  "value": "[parameters('sqlServerLicenseType')]"
+                  "value":"[parameters('sqlServerLicenseType')]"
                },
                "sqlServerImageType":{
-                  "value": "[parameters('sqlServerImageType')]"
+                  "value":"[parameters('failoverSQLServerImageType')]"
                },
                "existingFullyQualifiedDomainName":{
-                  "value": "[parameters('domainFQDN')]"
+                  "value":"[parameters('domainFQDN')]"
                },
                "existingDomainAccount":{
-                  "value": "[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
+                  "value":"[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
                },
                "domainAccountPassword":{
-                  "value": "[parameters('adminPassword')]"
+                  "value":"[parameters('adminPassword')]"
                },
                "existingSqlServiceAccount":{
-                  "value": "[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
+                  "value":"[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
                },
                "sqlServicePassword":{
-                  "value": "[parameters('adminPassword')]"
+                  "value":"[parameters('adminPassword')]"
                }
             }
          }
@@ -408,22 +419,22 @@
          "properties":{
             "mode":"Incremental",
             "templateLink":{
-               "uri": "[variables('LoadBalancerTemplateUri')]",
+               "uri":"[variables('LoadBalancerTemplateUri')]",
                "contentVersion":"1.0.0.0"
             },
-            "parameters": {
-              "name": {
-                  "value": "[parameters('loadBalancerName')]"
-              },
-              "location": {
-                  "value": "[parameters('location')]"
-              },
-              "sku": {
-                  "value": "[parameters('loadBalancerSku')]"
-              },
-              "tier": {
-                  "value": "[parameters('loadBalancerTier')]"
-              }
+            "parameters":{
+               "name":{
+                  "value":"[parameters('loadBalancerName')]"
+               },
+               "location":{
+                  "value":"[parameters('location')]"
+               },
+               "sku":{
+                  "value":"[parameters('loadBalancerSku')]"
+               },
+               "tier":{
+                  "value":"[parameters('loadBalancerTier')]"
+               }
             }
          }
       },
@@ -437,33 +448,33 @@
          "properties":{
             "mode":"Incremental",
             "templateLink":{
-               "uri": "[variables('AGListenerTemplateUri')]",
+               "uri":"[variables('AGListenerTemplateUri')]",
                "contentVersion":"1.0.0.0"
             },
             "parameters":{
                "existingFailoverClusterName":{
-                  "value": "[parameters('failoverClusterName')]"
+                  "value":"[parameters('failoverClusterName')]"
                },
                "existingSqlAvailabilityGroup":{
-                  "value": "[parameters('existingSqlAvailabilityGroup')]"
+                  "value":"[parameters('existingSqlAvailabilityGroup')]"
                },
                "existingVmList":{
-                  "value": "[variables('vmList')]"
+                  "value":"[variables('vmList')]"
                },
                "existingVnet":{
-                  "value": "[parameters('virtualNetwork')]"
+                  "value":"[parameters('virtualNetwork')]"
                },
                "existingSubnet":{
-                  "value": "[parameters('subnetName')]"
+                  "value":"[parameters('subnetNameForAG')]"
                },
                "existingInternalLoadBalancer":{
-                  "value": "[parameters('loadBalancerName')]"
+                  "value":"[parameters('loadBalancerName')]"
                },
-               "ListenerIp": {
-                  "value" : "[parameters('ListenerIp')]"
+               "ListenerIp":{
+                  "value":"[parameters('ListenerIp')]"
                },
-               "Listener": {
-                  "value" : "[parameters('ListenerName')]"
+               "Listener":{
+                  "value":"[parameters('ListenerName')]"
                }
             }
          }
