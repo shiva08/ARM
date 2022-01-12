@@ -20,7 +20,7 @@
       },
       "vmprefix":{
          "type":"string",
-         "defaultValue":"autovm"
+         "defaultValue":"autoaa"
       },
       "sqlServerLicenseType":{
          "type":"string",
@@ -117,17 +117,66 @@
       "ListenerName":{
          "type":"string",
          "defaultValue":"autoaglistenerc"
+      },
+      "createSubnets" : {
+         "type" : "bool",
+         "defaultValue" : "[false()]"
+      },
+      "subnetNamesArray": {
+         "type" : "Array",
+         "defaultValue" : []
+      }, 
+      "IPAddressSpace":{
+         "type":"string",
+         "defaultValue":"10.0.0.0"
+      },
+      "subnetClassBits":{
+         "type":"int",
+         "defaultValue":24
+      },
+      "subnetPrefix":{
+         "type":"string",
+         "defaultValue":"PrefixSubnetsss"
+      },
+      "networkSecurityGroupName":{
+         "type":"string",
+         "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
+      },
+      "createVM":{
+         "type" : "bool",
+         "defaultValue" : "[false()]"
+      },
+      "vmNamesArray":{
+         "type" : "Array",
+         "defaultValue" : []
       }
    },
    "variables":{
+      "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
       "copy":[
          {
-            "name":"vmArray",
+            "name":"vmArrayHelper",
             "count":"[parameters('vmcount')]",
-            "input":"[concat(parameters('vmprefix'), '-', copyIndex('vmArray'))]"
+            "input":"[concat(parameters('vmprefix'), '-', copyIndex('vmArrayHelper'))]"
+         },
+         {
+            "name":"subnetArrayHelper",
+            "count":"[parameters('vmcount')]",
+            "input":"[concat(parameters('subnetPrefix'), copyIndex('subnetArrayHelper'))]"
+         },
+         {
+            "name":"subnetIPAddressArray",
+            "count":"[parameters('vmcount')]",
+            "input":"[concat(variables('AddressRangeArray')[0], '.', variables('AddressRangeArray')[1], '.',  copyIndex('subnetIPAddressArray', 5), '.', variables('AddressRangeArray')[3], '/', string(parameters('subnetClassBits')) ) ]"
          }
       ],
+
+      "subnetArray" : "[if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') )]" ,
+      "vmArray" : "[ if(parameters('createVM'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
+
       "vmList":"[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
+      "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
+      // "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.network/subnet-add-vnet-existing/azuredeploy.json",
       "CreateSQLVMTemplateUri":"https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
       "JoinDomainTemplateUri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
       "AGPrerequisitesTemplateUri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
@@ -136,9 +185,45 @@
    },
    "resources":[
       {
+         "condition": "[parameters('createSubnets')]",
+         "type":"Microsoft.Resources/deployments",
+         "apiVersion":"2021-04-01",
+         "name":"[concat('add-subnet-to-vnet', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
+         "copy":{
+            "name":"Add-Subnet-To-Vnet",
+            "count":"[parameters('vmcount')]",
+            "mode":"parallel"
+         },
+         "properties":{
+            "mode":"Incremental",
+            "templateLink":{
+               "uri":"[variables('AddSubnetToVnetUri')]",
+               "contentVersion":"1.0.0.0"
+            },
+            "parameters":{
+               "existingVNETName":{
+                  "value":"[parameters('virtualNetwork')]"
+               },
+               "newSubnetName":{
+                  "value":"[variables('subnetArray')[copyIndex()]]"
+               },
+               "newSubnetAddressPrefix":{
+                  "value":"[variables('subnetIPAddressArray')[copyIndex()]]"
+               },
+               "networkSecurityGroupName":{
+                  "value":"[parameters('networkSecurityGroupName')]"
+               }
+            }
+         }
+      },
+      {
+         "condition": "[parameters('createVM')]",
          "type":"Microsoft.Resources/deployments",
          "apiVersion":"2021-04-01",
          "name":"[concat('create-sqlvm', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
+         "dependsOn":[
+            "Add-Subnet-To-Vnet"
+         ],
          "copy":{
             "name":"Create-SQLVM",
             "count":"[parameters('vmcount')]",
@@ -181,7 +266,8 @@
                   ]
                },
                "subnetName":{
-                  "value": "[parameters('subnetNameForAG')]"
+                  "value":"[variables('subnetArray')[copyIndex()]]"
+                  // "value": "[parameters('subnetNameForAG')]"
                },
                "virtualNetworkId":{
                   "value":"[concat('/subscriptions/',parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
