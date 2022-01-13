@@ -6,6 +6,10 @@
          "type":"string",
          "defaultValue":"[resourceGroup().name]"
       },
+      "location":{
+         "type":"string",
+         "defaultValue":"[resourceGroup().location]"
+      },
       "subscriptionId":{
          "type":"string",
          "defaultValue":"[subscription().subscriptionId]"
@@ -14,17 +18,55 @@
          "type":"string",
          "defaultValue":"SQLHAVNET1"
       },
+      "createSubnets" : {
+         "type" : "bool",
+         "defaultValue" : "[false()]"
+      }, 
+      "IPAddressSpace":{
+         "type":"string",
+         "defaultValue":"10.0.0.0"
+      },
+      "subnetClassBits":{
+         "type":"int",
+         "defaultValue":24
+      },
+      "subnetPrefix":{
+         "type":"string",
+         "defaultValue":"PrefixSubnetsss"
+      },
+      "networkSecurityGroupName":{
+         "type":"string",
+         "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
+      },
+      "subnetNamesArray": {
+         "type" : "Array",
+         "defaultValue" : []
+      },
       "vmcount":{
          "type":"int",
          "defaultValue":3
+      },
+      "createVM":{
+         "type" : "bool",
+         "defaultValue" : "[false()]"
+      },
+      // If createVM is true (checked on UI), generateVMNames can be true or false
+      // If createVM is false, generateVMNames should be false (to avoid spelling errors of vmPrefix-0,vmPrefix-1)
+      "generateVMNames":{
+         "type" : "bool",
+         "defaultValue" : "[false()]"
       },
       "vmprefix":{
          "type":"string",
          "defaultValue":"autoaa"
       },
-      "sqlServerLicenseType":{
+      "vmNamesArray":{
+         "type" : "Array",
+         "defaultValue" : []
+      },
+      "sqlServerImagePublisher":{
          "type":"string",
-         "defaultValue":"PAYG"
+         "defaultValue":"MicrosoftSQLServer"
       },
       "sqlServerImageType":{
          "type":"string",
@@ -34,9 +76,9 @@
          "type":"string",
          "defaultValue":"Enterprise"
       },
-      "sqlServerImagePublisher":{
+      "sqlServerLicenseType":{
          "type":"string",
-         "defaultValue":"MicrosoftSQLServer"
+         "defaultValue":"PAYG"
       },
       // "existingSqlServiceAccount":{
       //    "type":"string",
@@ -46,10 +88,6 @@
       //    "type":"string",
       //    "defaultValue":"Contoso!0000"
       // },
-      "location":{
-         "type":"string",
-         "defaultValue":"[resourceGroup().location]"
-      },
       "adminUsername":{
          "type":"string",
          "defaultValue":"DomainAdmin"
@@ -117,45 +155,7 @@
       "ListenerName":{
          "type":"string",
          "defaultValue":"autoaglistenerc"
-      },
-      "createSubnets" : {
-         "type" : "bool",
-         "defaultValue" : "[false()]"
-      },
-      "subnetNamesArray": {
-         "type" : "Array",
-         "defaultValue" : []
-      }, 
-      "IPAddressSpace":{
-         "type":"string",
-         "defaultValue":"10.0.0.0"
-      },
-      "subnetClassBits":{
-         "type":"int",
-         "defaultValue":24
-      },
-      "subnetPrefix":{
-         "type":"string",
-         "defaultValue":"PrefixSubnetsss"
-      },
-      "networkSecurityGroupName":{
-         "type":"string",
-         "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
-      },
-      "generateVMNames":{
-         "type" : "bool",
-         "defaultValue" : "[false()]"
-      },
-      "vmNamesArray":{
-         "type" : "Array",
-         "defaultValue" : []
-      },
-      "createVM":{
-         "type" : "bool",
-         "defaultValue" : "[false()]"
       }
-      // If createVM is true (checked on UI), generateVMNames can be true or false
-      // If createVM is false, generateVMNames should be false (to avoid spelling errors of vmPrefix-0,vmPrefix-1)
    },
    "variables":{
       "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
