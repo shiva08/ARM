@@ -85,7 +85,7 @@
       //    "defaultValue":"DomainAdmin@corp.contoso.com"
       // },
       // "sqlServicePassword":{
-      //    "type":"string",
+      //    "type":"securestring",
       //    "defaultValue":"Contoso!0000"
       // },
       "adminUsername":{
@@ -93,7 +93,7 @@
          "defaultValue":"DomainAdmin"
       },
       "adminPassword":{
-         "type":"string",
+         "type":"securestring",
          "defaultValue":"Contoso!0000"
       },
       "subnetNameForAG":{
