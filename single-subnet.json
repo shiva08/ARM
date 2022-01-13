@@ -142,14 +142,20 @@
          "type":"string",
          "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
       },
-      "createVM":{
+      "generateVMNames":{
          "type" : "bool",
          "defaultValue" : "[false()]"
       },
       "vmNamesArray":{
          "type" : "Array",
          "defaultValue" : []
+      },
+      "createVM":{
+         "type" : "bool",
+         "defaultValue" : "[false()]"
       }
+      // Edge case : There shouldn't be a case when generateVMNames is true and createVM is false unless existing VMs are exactly vmPrefix-0, vmPrefix-1...
+      // If VMs exist, it is best to give them explicitly. - Should be handled by UI 
    },
    "variables":{
       "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
@@ -171,8 +177,8 @@
          }
       ],
 
-      "subnetArray" : "[if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') )]" ,
-      "vmArray" : "[ if(parameters('createVM'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
+      "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') ) ]" ,
+      "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
 
       "vmList":"[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
       "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
