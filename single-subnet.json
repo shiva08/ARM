@@ -154,8 +154,8 @@
          "type" : "bool",
          "defaultValue" : "[false()]"
       }
-      // Edge case : There shouldn't be a case when generateVMNames is true and createVM is false unless existing VMs are exactly vmPrefix-0, vmPrefix-1...
-      // If VMs exist, it is best to give them explicitly. - Should be handled by UI 
+      // If createVM is true (checked on UI), generateVMNames can be true or false
+      // If createVM is false, generateVMNames should be false (to avoid spelling errors of vmPrefix-0,vmPrefix-1)
    },
    "variables":{
       "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
