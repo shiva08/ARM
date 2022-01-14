@@ -12,3 +12,8 @@ Before deploying, ensure these are present:
 2. A domain controller VM is present
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshiva08%2FARM%2Fmain%2Fsingle-subnet.json)
+
+
+If createVM is false, generateVMNames is false.
+Maximum VMs = 9
+Listenername length <=15
