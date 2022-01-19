@@ -1,6 +1,6 @@
 # ARM
 
-Single subnet template(parent) has these features:
+Single subnet template(nested.json) has these features:
 1. Create multiple SQL VMs
 2. Join the domain
 3. Setup AG prerequisites
