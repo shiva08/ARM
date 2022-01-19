@@ -5,6 +5,7 @@
       "resourceGroup":{
          "type":"string",
          "defaultValue":"[resourceGroup().name]"
+         
       },
       "location":{
          "type":"string",
@@ -18,52 +19,63 @@
          "type":"string",
          "defaultValue":"SQLHAVNET1"
       },
-      "createSubnets" : {
-         "type" : "bool",
-         "defaultValue" : "[false()]"
-      }, 
-      "IPAddressSpace":{
-         "type":"string",
-         "defaultValue":"10.0.0.0"
-      },
-      "subnetClassBits":{
-         "type":"int",
-         "defaultValue":24
-      },
-      "subnetPrefix":{
-         "type":"string",
-         "defaultValue":"PrefixSubnetsss"
-      },
-      "networkSecurityGroupName":{
-         "type":"string",
-         "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
-      },
+      // "createSubnets" : {
+      //    "type" : "bool",
+      //    "defaultValue" : "[false()]"
+      // }, 
+      // "IPAddressSpace":{
+      //    "type":"string",
+      //    "defaultValue":"10.0.0.0"
+      // },
+      // "subnetClassBits":{
+      //    "type":"int",
+      //    "defaultValue":24
+      // },
+      // "subnetPrefix":{
+      //    "type":"string",
+      //    "defaultValue":"PrefixSubnetsss"
+      // },
+      // "networkSecurityGroupName":{
+      //    "type":"string",
+      //    "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
+      // },
       "subnetNamesArray": {
          "type" : "Array",
-         "defaultValue" : []
+         "defaultValue" : [],
+         "metadata": {
+           "description": "Make sure the array size is equal to VM count"
+         }
       },
       "vmcount":{
          "type":"int",
-         "defaultValue":3
+         "defaultValue":3,
+         "minValue" : 2,
+         "maxValue" : 10,
+         "metadata": {
+           "description": "Max value of VMs currently supported for AG is 10"
+         }
       },
-      "createVM":{
-         "type" : "bool",
-         "defaultValue" : "[false()]"
-      },
+      // "createVM":{
+      //    "type" : "bool",
+      //    "defaultValue" : "[false()]"
+      // },
       // If createVM is true (checked on UI), generateVMNames can be true or false
       // If createVM is false, generateVMNames should be false (to avoid spelling errors of vmPrefix-0,vmPrefix-1)
-      "generateVMNames":{
-         "type" : "bool",
-         "defaultValue" : "[false()]"
-      },
+      // "generateVMNames":{
+      //    "type" : "bool",
+      //    "defaultValue" : "[false()]"
+      // },
       "vmprefix":{
          "type":"string",
-         "defaultValue":"autoaa"
+         "defaultValue":"autoaa",
+         "metadata": {
+           "description": "VMs created : vmprefix-1, vmprefix-2"
+         }
       },
-      "vmNamesArray":{
-         "type" : "Array",
-         "defaultValue" : []
-      },
+      // "vmNamesArray":{
+      //    "type" : "Array",
+      //    "defaultValue" : []
+      // },
       "sqlServerImagePublisher":{
          "type":"string",
          "defaultValue":"MicrosoftSQLServer"
@@ -112,10 +124,6 @@
          "type":"string",
          "defaultValue":"Standard_D2s_v3"
       },
-      "existingFullyQualifiedDomainName":{
-         "type":"string",
-         "defaultValue":"corp.contoso.com"
-      },
       "domainJoinUserName":{
          "type":"string",
          "defaultValue":"CORP"
@@ -163,25 +171,31 @@
          {
             "name":"vmArrayHelper",
             "count":"[parameters('vmcount')]",
-            "input":"[concat(parameters('vmprefix'), '-', copyIndex('vmArrayHelper'))]"
-         },
-         {
-            "name":"subnetArrayHelper",
-            "count":"[parameters('vmcount')]",
-            "input":"[concat(parameters('subnetPrefix'), copyIndex('subnetArrayHelper'))]"
-         },
-         {
-            "name":"subnetIPAddressArray",
-            "count":"[parameters('vmcount')]",
-            "input":"[format('{0}.{1}.{2}.{3}/{4}', variables('AddressRangeArray')[0], variables('AddressRangeArray')[1], copyIndex('subnetIPAddressArray', 5), variables('AddressRangeArray')[3], string(parameters('subnetClassBits')) ) ]"
+            "input":"[concat(parameters('vmprefix'), '-', copyIndex('vmArrayHelper', 1))]"
          }
+         // ,
+         // {
+         //    "name":"subnetArrayHelper",
+         //    "count":"[parameters('vmcount')]",
+         //    "input":"[concat(parameters('subnetPrefix'), copyIndex('subnetArrayHelper'))]"
+         // },
+         // {
+         //    "name":"subnetIPAddressArray",
+         //    "count":"[parameters('vmcount')]",
+         //    "input":"[format('{0}.{1}.{2}.{3}/{4}', variables('AddressRangeArray')[0], variables('AddressRangeArray')[1], copyIndex('subnetIPAddressArray', 5), variables('AddressRangeArray')[3], string(parameters('subnetClassBits')) ) ]"
+         // }
       ],
 
-      "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') ) ]" ,
-      "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
+      // "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') ) ]" ,
+      // "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
+
+      "subnetArray" : "[ parameters('subnetNamesArray') ) ]",
+      "vmArray" : "[ variables('vmArrayHelper')) ]",
+
+
 
       "vmList":"[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
-      "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
+      // "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
       // "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.network/subnet-add-vnet-existing/azuredeploy.json",
       "CreateSQLVMTemplateUri":"https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
       "JoinDomainTemplateUri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
@@ -190,89 +204,89 @@
       "AGListenerTemplateUri":"https://raw.githubusercontent.com/shiva08/ARM/main/ag-listener.json"
    },
    "resources":[
-      {
-         "condition": "[parameters('createSubnets')]",
-         "type":"Microsoft.Resources/deployments",
-         "apiVersion":"2021-04-01",
-         "name":"[concat('add-subnet-to-vnet', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
-         "copy":{
-            "name":"Add-Subnet-To-Vnet",
-            "count":"[parameters('vmcount')]",
-            "mode":"parallel"
-         },
-         "properties":{
-            "expressionEvaluationOptions": {
-               "scope": "inner"
-            },
-            "mode":"Incremental",
-            "template":{
-              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-              "contentVersion": "1.0.0.0",
-              "metadata": {
-                "_generator": {
-                  "name": "bicep",
-                  "version": "0.4.1008.15138",
-                  "templateHash": "10509826654560146891"
-                }
-              },
-              "parameters": {
-                "existingVNETName": {
-                  "type": "string",
-                  "metadata": {
-                    "description": "Name of the VNET to add a subnet to"
-                  }
-                },
-                "newSubnetName": {
-                  "type": "string",
-                  "metadata": {
-                    "description": "Name of the subnet to add"
-                  }
-                },
-                "newSubnetAddressPrefix": {
-                  "type": "string",
-                  "defaultValue": "10.0.0.0/24",
-                  "metadata": {
-                    "description": "Address space of the subnet to add"
-                  }
-                },
-                "networkSecurityGroupName" :{
-                  "type" : "string"
-                }
-              },
-              "functions": [],
-              "resources": [
-                {
-                  "type": "Microsoft.Network/virtualNetworks/subnets",
-                  "apiVersion": "2021-03-01",
-                  "name": "[format('{0}/{1}', parameters('existingVNETName'), parameters('newSubnetName'))]",
-                  "properties": {
-                    "addressPrefix": "[parameters('newSubnetAddressPrefix')]",
-                    "networkSecurityGroup" : {
-                       "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
-                    }
-                   }
-                }
-              ]
+      // {
+      //    "condition": "[parameters('createSubnets')]",
+      //    "type":"Microsoft.Resources/deployments",
+      //    "apiVersion":"2021-04-01",
+      //    "name":"[concat('add-subnet-to-vnet', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
+      //    "copy":{
+      //       "name":"Add-Subnet-To-Vnet",
+      //       "count":"[parameters('vmcount')]",
+      //       "mode":"parallel"
+      //    },
+      //    "properties":{
+      //       "expressionEvaluationOptions": {
+      //          "scope": "inner"
+      //       },
+      //       "mode":"Incremental",
+      //       "template":{
+      //         "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+      //         "contentVersion": "1.0.0.0",
+      //         "metadata": {
+      //           "_generator": {
+      //             "name": "bicep",
+      //             "version": "0.4.1008.15138",
+      //             "templateHash": "10509826654560146891"
+      //           }
+      //         },
+      //         "parameters": {
+      //           "existingVNETName": {
+      //             "type": "string",
+      //             "metadata": {
+      //               "description": "Name of the VNET to add a subnet to"
+      //             }
+      //           },
+      //           "newSubnetName": {
+      //             "type": "string",
+      //             "metadata": {
+      //               "description": "Name of the subnet to add"
+      //             }
+      //           },
+      //           "newSubnetAddressPrefix": {
+      //             "type": "string",
+      //             "defaultValue": "10.0.0.0/24",
+      //             "metadata": {
+      //               "description": "Address space of the subnet to add"
+      //             }
+      //           },
+      //           "networkSecurityGroupName" :{
+      //             "type" : "string"
+      //           }
+      //         },
+      //         "functions": [],
+      //         "resources": [
+      //           {
+      //             "type": "Microsoft.Network/virtualNetworks/subnets",
+      //             "apiVersion": "2021-03-01",
+      //             "name": "[format('{0}/{1}', parameters('existingVNETName'), parameters('newSubnetName'))]",
+      //             "properties": {
+      //               "addressPrefix": "[parameters('newSubnetAddressPrefix')]",
+      //               "networkSecurityGroup" : {
+      //                  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]"
+      //               }
+      //              }
+      //           }
+      //         ]
             
-            },
-            "parameters":{
-               "existingVNETName":{
-                  "value":"[parameters('virtualNetwork')]"
-               },
-               "newSubnetName":{
-                  "value":"[variables('subnetArray')[copyIndex()]]"
-               },
-               "newSubnetAddressPrefix":{
-                  "value":"[variables('subnetIPAddressArray')[copyIndex()]]"
-               },
-               "networkSecurityGroupName":{
-                  "value":"[parameters('networkSecurityGroupName')]"
-               }
-            }
-         }
-      },
+      //       },
+      //       "parameters":{
+      //          "existingVNETName":{
+      //             "value":"[parameters('virtualNetwork')]"
+      //          },
+      //          "newSubnetName":{
+      //             "value":"[variables('subnetArray')[copyIndex()]]"
+      //          },
+      //          "newSubnetAddressPrefix":{
+      //             "value":"[variables('subnetIPAddressArray')[copyIndex()]]"
+      //          },
+      //          "networkSecurityGroupName":{
+      //             "value":"[parameters('networkSecurityGroupName')]"
+      //          }
+      //       }
+      //    }
+      // },
       {
-         "condition": "[parameters('createVM')]",
+         // "condition": "[parameters('createVM')]",
          "type":"Microsoft.Resources/deployments",
          "apiVersion":"2021-04-01",
          "name":"[concat('create-sqlvm', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
@@ -1074,7 +1088,7 @@
                          "SqlImageOffer": "[parameters('sqlServerImageType')]",
                          "SqlImageSku": "Enterprise",
                          "WsfcDomainProfile": {
-                             "DomainFqdn": "[parameters('existingFullyQualifiedDomainName')]",
+                             "DomainFqdn": "[parameters('domainFQDN')]",
                              "OuPath": "[parameters('existingOuPath')]",
                              "ClusterBootstrapAccount": "[parameters('existingDomainAccount')]",
                              "ClusterOperatorAccount": "[parameters('existingDomainAccount')]",
