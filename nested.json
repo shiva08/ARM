@@ -50,9 +50,9 @@
          "type":"int",
          "defaultValue":3,
          "minValue" : 2,
-         "maxValue" : 10,
+         "maxValue" : 9,
          "metadata": {
-           "description": "Max value of VMs currently supported for AG is 10"
+           "description": "Max value of VMs currently supported for AG is 9"
          }
       },
       // "createVM":{
@@ -162,7 +162,11 @@
       },
       "ListenerName":{
          "type":"string",
-         "defaultValue":"autoagliste"
+         "defaultValue":"autoagliste",
+         "maxLength" : 15,
+         "metadata": {
+           "description": "Maximum length is 15"
+         }
       }
    },
    "variables":{
