@@ -11,7 +11,7 @@ Before deploying, ensure these are present:
 1. A valid Virtual Network with a subnet
 2. A domain controller VM is present
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshiva08%2FARM%2Fmain%2Fsingle-subnet.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshiva08%2FARM%2Fmain%2Fnested.json)
 
 
 If createVM is false, generateVMNames is false.
