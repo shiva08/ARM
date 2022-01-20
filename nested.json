@@ -5,7 +5,6 @@
       "resourceGroup":{
          "type":"string",
          "defaultValue":"[resourceGroup().name]"
-         
       },
       "location":{
          "type":"string",
@@ -46,7 +45,7 @@
            "description": "Make sure the array size is equal to VM count"
          }
       },
-      "vmcount":{
+      "vmCount":{
          "type":"int",
          "defaultValue":3,
          "minValue" : 2,
@@ -65,11 +64,11 @@
       //    "type" : "bool",
       //    "defaultValue" : "[false()]"
       // },
-      "vmprefix":{
+      "vmPrefix":{
          "type":"string",
          "defaultValue":"autoaa",
          "metadata": {
-           "description": "VMs created : vmprefix-1, vmprefix-2"
+           "description": "VMs created : vmPrefix-1, vmPrefix-2"
          }
       },
       // "vmNamesArray":{
@@ -156,10 +155,6 @@
          "type":"string",
          "defaultValue":"autoaggroupc"
       },
-      "ListenerIp":{
-         "type":"string",
-         "defaultValue":"10.0.0.22"
-      },
       "ListenerName":{
          "type":"string",
          "defaultValue":"autoagliste",
@@ -167,6 +162,10 @@
          "metadata": {
            "description": "Maximum length is 15"
          }
+      },
+      "ListenerIp":{
+         "type":"string",
+         "defaultValue":"10.0.0.22"
       }
    },
    "variables":{
@@ -174,18 +173,18 @@
       "copy":[
          {
             "name":"vmArrayHelper",
-            "count":"[parameters('vmcount')]",
-            "input":"[concat(parameters('vmprefix'), '-', copyIndex('vmArrayHelper', 1))]"
+            "count":"[parameters('vmCount')]",
+            "input":"[concat(parameters('vmPrefix'), '-', copyIndex('vmArrayHelper', 1))]"
          }
          // ,
          // {
          //    "name":"subnetArrayHelper",
-         //    "count":"[parameters('vmcount')]",
+         //    "count":"[parameters('vmCount')]",
          //    "input":"[concat(parameters('subnetPrefix'), copyIndex('subnetArrayHelper'))]"
          // },
          // {
          //    "name":"subnetIPAddressArray",
-         //    "count":"[parameters('vmcount')]",
+         //    "count":"[parameters('vmCount')]",
          //    "input":"[format('{0}.{1}.{2}.{3}/{4}', variables('AddressRangeArray')[0], variables('AddressRangeArray')[1], copyIndex('subnetIPAddressArray', 5), variables('AddressRangeArray')[3], string(parameters('subnetClassBits')) ) ]"
          // }
       ],
@@ -215,7 +214,7 @@
       //    "name":"[concat('add-subnet-to-vnet', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
       //    "copy":{
       //       "name":"Add-Subnet-To-Vnet",
-      //       "count":"[parameters('vmcount')]",
+      //       "count":"[parameters('vmCount')]",
       //       "mode":"parallel"
       //    },
       //    "properties":{
@@ -299,7 +298,7 @@
          ],
          "copy":{
             "name":"Create-SQLVM",
-            "count":"[parameters('vmcount')]",
+            "count":"[parameters('vmCount')]",
             "mode":"parallel"
          },
          "properties":{
