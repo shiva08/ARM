@@ -51,7 +51,7 @@
          "minValue" : 2,
          "maxValue" : 9,
          "metadata": {
-           "description": "Max value of VMs currently supported for AG is 9"
+           "description": "Maximum number of VMs currently supported for AG is 9"
          }
       },
       // "createVM":{
@@ -104,7 +104,7 @@
          "defaultValue":"DomainAdmin"
       },
       "adminPassword":{
-         "type":"securestring",
+         "type":"secureString",
          "defaultValue":"Contoso!0000"
       },
       "subnetNameForAG":{
@@ -121,7 +121,10 @@
       },
       "virtualMachineSize":{
          "type":"string",
-         "defaultValue":"Standard_D2s_v3"
+         "defaultValue":"Standard_D2s_v3",
+         "metadata": {
+           "description": "Size of the virtual machine."
+         }
       },
       "domainJoinUserName":{
          "type":"string",
