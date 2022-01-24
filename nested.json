@@ -89,7 +89,11 @@
       },
       "sqlServerLicenseType":{
          "type":"string",
-         "defaultValue":"PAYG"
+         "defaultValue":"PAYG",
+         "allowedValues": [ "PAYG", "AHUB" ],
+         "metadata": {
+             "description": "Specify the SQL Server License type for all VM's."
+         }
       },
       // "existingSqlServiceAccount":{
       //    "type":"string",
@@ -136,11 +140,19 @@
       },
       "failoverClusterName":{
          "type":"string",
-         "defaultValue":"autofc"
+         "defaultValue":"autofc",
+         "maxLength": 15,
+         "metadata": {
+            "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
+         }
       },
       "failoverSQLServerImageType":{
          "type":"string",
-         "defaultValue":"SQL2016-WS2016"
+         "defaultValue":"SQL2016-WS2016",
+         "allowedValues": [ "SQL2017-WS2016", "SQL2016-WS2016", "SQL2019-WS2019" ],
+         "metadata": {
+            "description": "Select the version of SQL Server Image type"
+         }
       },
       "loadBalancerName":{
          "type":"string",
@@ -148,11 +160,19 @@
       },
       "loadBalancerSku":{
          "type":"string",
-         "defaultValue":"Standard"
+         "defaultValue":"Standard",
+         "allowedValues": [
+           "Basic", 
+           "Standard"
+         ],
       },
       "loadBalancerTier":{
          "type":"string",
-         "defaultValue":"Regional"
+         "defaultValue":"Regional",
+         "allowedValues": [
+           "Regional", 
+           "Global"
+         ],
       },
       "existingSqlAvailabilityGroup":{
          "type":"string",
@@ -163,7 +183,7 @@
          "defaultValue":"autoagliste",
          "maxLength" : 15,
          "metadata": {
-           "description": "Maximum length is 15"
+           "description": "Maximum length of AG Listener is 15"
          }
       },
       "ListenerIp":{
