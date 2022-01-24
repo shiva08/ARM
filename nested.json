@@ -182,7 +182,7 @@
          "type":"string",
          "defaultValue":"autoaggroupc",
          "metadata": {
-           "description": "Ensure there is no AG registered with domain controller."
+           "description": "Ensure there is no AG with same name registered with domain controller."
          }
       },
       "ListenerName":{
