@@ -1442,7 +1442,10 @@
                  "VM3": "[if(less(3, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[3]))), json('[]'))]",
                  "VM4": "[if(less(4, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[4]))), json('[]'))]",
                  "VM5": "[if(less(5, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[5]))), json('[]'))]",
-                 "SqlVmResourceIdList": "[union(variables('VM0'), variables('VM1'), variables('VM2'), variables('VM3'), variables('VM4'), variables('VM5'))]"
+                 "VM6": "[if(less(6, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[6]))), json('[]'))]",
+                 "VM7": "[if(less(7, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[7]))), json('[]'))]",
+                 "VM8": "[if(less(8, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[8]))), json('[]'))]",
+                 "SqlVmResourceIdList": "[union(variables('VM0'), variables('VM1'), variables('VM2'), variables('VM3'), variables('VM4'), variables('VM5'), variables('VM6'), variables('VM7'), variables('VM8'))]"
                },
                "resources": [
                  {
