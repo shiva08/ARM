@@ -121,7 +121,11 @@
       },
       "publicIpAddressSku":{
          "type":"string",
-         "defaultValue":"Standard"
+         "defaultValue":"Standard",
+         "allowedValues": [
+           "Basic", 
+           "Standard"
+         ]
       },
       "virtualMachineSize":{
          "type":"string",
@@ -164,7 +168,7 @@
          "allowedValues": [
            "Basic", 
            "Standard"
-         ],
+         ]
       },
       "loadBalancerTier":{
          "type":"string",
@@ -172,7 +176,7 @@
          "allowedValues": [
            "Regional", 
            "Global"
-         ],
+         ]
       },
       "existingSqlAvailabilityGroup":{
          "type":"string",
