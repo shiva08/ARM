@@ -178,16 +178,19 @@
            "Global"
          ]
       },
-      "existingSqlAvailabilityGroup":{
+      "sqlAvailabilityGroup":{
          "type":"string",
-         "defaultValue":"autoaggroupc"
+         "defaultValue":"autoaggroupc",
+         "metadata": {
+           "description": "Ensure there is no AG registered with domain controller."
+         }
       },
       "ListenerName":{
          "type":"string",
          "defaultValue":"autoagliste",
          "maxLength" : 15,
          "metadata": {
-           "description": "Maximum length of AG Listener is 15"
+           "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
          }
       },
       "ListenerIp":{
@@ -1448,7 +1451,7 @@
                      "apiVersion": "2017-03-01-preview",
                      "location": "[parameters('Location')]",
                      "properties": {
-                         "AvailabilityGroupName": "[parameters('existingSqlAvailabilityGroup')]",
+                         "AvailabilityGroupName": "[parameters('sqlAvailabilityGroup')]",
                          "AvailabilityGroupConfiguration": {
                            "copy": [
                                      {
@@ -1485,7 +1488,7 @@
                   "value":"[parameters('failoverClusterName')]"
                },
                "existingSqlAvailabilityGroup":{
-                  "value":"[parameters('existingSqlAvailabilityGroup')]"
+                  "value":"[parameters('sqlAvailabilityGroup')]"
                },
                "existingVmList":{
                   "value":"[variables('vmList')]"
