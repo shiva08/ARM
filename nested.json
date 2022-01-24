@@ -2,18 +2,6 @@
    "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
    "contentVersion":"1.0.0.0",
    "parameters":{
-      "resourceGroup":{
-         "type":"string",
-         "defaultValue":"[resourceGroup().name]"
-      },
-      "location":{
-         "type":"string",
-         "defaultValue":"[resourceGroup().location]"
-      },
-      "subscriptionId":{
-         "type":"string",
-         "defaultValue":"[subscription().subscriptionId]"
-      },
       "virtualNetwork":{
          "type":"string",
          "defaultValue":"SQLHAVNET1"
@@ -44,6 +32,10 @@
          "metadata": {
            "description": "Make sure the array size is equal to VM count"
          }
+      },
+      "subnetNameForAG":{
+         "type":"string",
+         "defaultValue":"DC-subnet"
       },
       "vmCount":{
          "type":"int",
@@ -81,11 +73,20 @@
       },
       "sqlServerImageType":{
          "type":"string",
-         "defaultValue":"SQL2016SP2-WS2016"
+         "defaultValue":"SQL2016SP2-WS2016",
+         "allowedValues": [ "SQL2017-WS2016", "SQL2016-WS2016", "SQL2019-WS2019" ]
       },
       "sqlServerSku":{
          "type":"string",
-         "defaultValue":"Enterprise"
+         "defaultValue":"Enterprise",
+         "allowedValues": [
+           "Enterprise",
+           "Standard",
+           "Web"
+         ],
+         "metadata": {
+           "description": "SQL Server Gallery Image SKU"
+         }
       },
       "sqlServerLicenseType":{
          "type":"string",
@@ -111,13 +112,13 @@
          "type":"secureString",
          "defaultValue":"Contoso!0000"
       },
-      "subnetNameForAG":{
-         "type":"string",
-         "defaultValue":"DC-subnet"
-      },
       "publicIpAddressType":{
          "type":"string",
-         "defaultValue":"Static"
+         "defaultValue":"Static",
+         "allowedValues": [
+           "Static", 
+           "Dynamic"
+         ]
       },
       "publicIpAddressSku":{
          "type":"string",
@@ -477,7 +478,7 @@
                      "name": "[parameters('networkInterfaceName')]",
                      "type": "Microsoft.Network/networkInterfaces",
                      "apiVersion": "2021-03-01",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "dependsOn": [
                          "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                          "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
@@ -507,7 +508,7 @@
                      "name": "[parameters('networkSecurityGroupName')]",
                      "type": "Microsoft.Network/networkSecurityGroups",
                      "apiVersion": "2019-02-01",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "properties": {
                          "securityRules": "[parameters('networkSecurityGroupRules')]"
                      }
@@ -516,7 +517,7 @@
                      "name": "[parameters('publicIpAddressName')]",
                      "type": "Microsoft.Network/publicIpAddresses",
                      "apiVersion": "2019-02-01",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "properties": {
                          "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
                      },
@@ -528,7 +529,7 @@
                      "name": "[parameters('dataDiskResources')[copyIndex()].name]",
                      "type": "Microsoft.Compute/disks",
                      "apiVersion": "2020-12-01",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "properties": "[parameters('dataDiskResources')[copyIndex()].properties]",
                      "sku": {
                          "name": "[parameters('dataDiskResources')[copyIndex()].sku]"
@@ -542,7 +543,7 @@
                      "name": "[parameters('virtualMachineName')]",
                      "type": "Microsoft.Compute/virtualMachines",
                      "apiVersion": "2021-07-01",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "dependsOn": [
                          "managedDiskResources",
                          "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
@@ -681,7 +682,7 @@
                   "value":"[parameters('sqlServerLicenseType')]"
                },
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[resourceGroup().location]"
                },
                "networkInterfaceName":{
                   "value":"[concat(variables('vmArray')[copyIndex()],'-ni')]"
@@ -702,7 +703,7 @@
                   "value": "[parameters('subnetNameForAG')]"
                },
                "virtualNetworkId":{
-                  "value":"[concat('/subscriptions/',parameters('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
+                  "value":"[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
                },
                "publicIpAddressName":{
                   "value":"[concat(variables('vmArray')[copyIndex()],'-ip')]"
@@ -720,7 +721,7 @@
                   "value":"[variables('vmArray')[copyIndex()]]"
                },
                "virtualMachineRG":{
-                  "value":"[parameters('resourceGroup')]"
+                  "value":"[resourceGroup().name]"
                },
                "osDiskType":{
                   "value":"Premium_LRS"
@@ -791,7 +792,7 @@
                   "value":false
                },
                "sqlVirtualMachineLocation":{
-                  "value":"[parameters('location')]"
+                  "value":"[resourceGroup().location]"
                },
                "sqlVirtualMachineName":{
                   "value":"[variables('vmArray')[copyIndex()]]"
@@ -917,7 +918,7 @@
                   "apiVersion": "2015-06-15",
                   "type": "Microsoft.Compute/virtualMachines/extensions",
                   "name": "[concat(trim(variables('vmListArray')[copyIndex()]),'/joindomain')]",
-                  "location": "[parameters('location')]",
+                  "location": "[resourceGroup().location]",
                   "copy": {
                     "name": "vmDomainJoinCopy",
                     "count": "[length(variables('vmListArray'))]"
@@ -943,7 +944,7 @@
             },
             "parameters":{
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[resourceGroup().location]"
                },
                "vmList":{
                   "value":"[variables('vmList')]"
@@ -1085,7 +1086,7 @@
                      "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
                      "apiVersion": "2017-03-01-preview",
                      "name": "[trim(variables('existingVMListArray')[copyIndex()])]",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "copy": {
                          "name": "sqlvirtualMachineLoop",
                          "count": "[length(variables('existingVMListArray'))]"
@@ -1103,7 +1104,7 @@
                          "name": "Standard_LRS"
                      },
                      "kind": "StorageV2",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "properties": {
                          "accessTier": "Hot",
                          "supportsHttpsTrafficOnly": true
@@ -1113,7 +1114,7 @@
                      "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups",
                      "apiVersion": "2017-03-01-preview",
                      "name": "[parameters('failoverClusterName')]",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "properties": {
                          "SqlImageOffer": "[parameters('sqlServerImageType')]",
                          "SqlImageSku": "Enterprise",
@@ -1175,7 +1176,7 @@
                                  "name": "[trim(parameters('existingVirtualMachineNames')[copyIndex()])]",
                                  "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
                                  "apiVersion": "2017-03-01-preview",
-                                 "location": "[parameters('location')]",
+                                 "location": "[resourceGroup().location]",
                                  "copy": {
                                      "name": "vmToClusterLoop",
                                      "count": "[length(parameters('existingVirtualMachineNames'))]"
@@ -1198,7 +1199,7 @@
                                  "value": "[variables('existingVMListArray')]"
                              },
                              "location": {
-                                 "value": "[parameters('location')]"
+                                 "value": "[resourceGroup().location]"
                              },
                              "sqlServerLicenseType": {
                                  "value": "[parameters('sqlServerLicenseType')]"
@@ -1286,7 +1287,7 @@
                      "apiVersion": "2021-02-01",
                      "name": "[parameters('name')]",
                      "type": "Microsoft.Network/loadBalancers",
-                     "location": "[parameters('location')]",
+                     "location": "[resourceGroup().location]",
                      "dependsOn": [],
                      "tags": {},
                      "properties": {
@@ -1298,7 +1299,9 @@
                                      "privateIPAddressVersion": "IPv4",
                                      "privateIPAllocationMethod": "Dynamic",
                                      "subnet": {
-                                         "id": "/subscriptions/0009fc4d-e310-4e40-8e63-c48a23e9cdc1/resourceGroups/SQL-HA-RG/providers/Microsoft.Network/virtualNetworks/SQLHAVNET1/subnets/DC-Subnet"
+                                         "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork'), '/subnets/', parameters('subnetNameForAG') )]"
+
+                                         // "/subscriptions/0009fc4d-e310-4e40-8e63-c48a23e9cdc1/resourceGroups/SQL-HA-RG/providers/Microsoft.Network/virtualNetworks/SQLHAVNET1/subnets/DC-Subnet"
                                      }
                                  }
                              }
@@ -1321,7 +1324,7 @@
                   "value":"[parameters('loadBalancerName')]"
                },
                "location":{
-                  "value":"[parameters('location')]"
+                  "value":"[resourceGroup().location]"
                },
                "sku":{
                   "value":"[parameters('loadBalancerSku')]"
