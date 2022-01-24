@@ -73,8 +73,7 @@
       },
       "sqlServerImageType":{
          "type":"string",
-         "defaultValue":"SQL2016SP2-WS2016",
-         "allowedValues": [ "SQL2017-WS2016", "SQL2016-WS2016", "SQL2019-WS2019" ]
+         "defaultValue":"SQL2016SP2-WS2016"
       },
       "sqlServerSku":{
          "type":"string",
