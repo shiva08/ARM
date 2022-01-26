@@ -29,7 +29,7 @@
          "type" : "Array",
          "defaultValue" : [],
          "metadata": {
-           "description": "Make sure the array size is equal to VM count, Example: ["Subnet-1","Subnet-2"] "
+           "description": "Make sure the array size is equal to VM count, Example: ['Subnet-1','Subnet-2'] "
          }
       },
       "subnetNameForAG":{
