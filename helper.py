@@ -1,5 +1,5 @@
-import json
 # On azure cli , run az vm image list --all --publisher MicrosoftSQLServer >>p.txt
+import json
 t = [
   {
     "offer": "SQL2008R2SP3-WS2008R2SP1",
@@ -3152,16 +3152,13 @@ t = [
     "version": "15.0.220111"
   }
 ]
-stopwords = ["ubuntu", "rhel", "sles", "sql200", "sql2010", "sql2011"]
-def bad(w):
-    for c in stopwords:
-        if c in b:
-            return True
-    return False
+
 offers = []
-for a in t:
-    b = a["offer"].lower()
-    if a["sku"]!="web" and not bad(b):
-        offers += [a["offer"]]
+for b in t:
+    a = b["offer"]
+    p = a.index('-')
+    if b["sku"]!="web" and int(a[3:7])>=2012 and a[p+1:p+3].lower()=="ws":
+        offers += [a]
+
 print(offers)
     
