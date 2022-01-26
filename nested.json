@@ -3,9 +3,7 @@
    "contentVersion":"1.0.0.0",
    "parameters":{
       "virtualNetwork":{
-         "type":"string",
-         "defaultValue":"SQLHAVNET1"
-         // remove default
+         "type":"string"
       },
       // "createSubnets" : {
       //    "type" : "bool",
@@ -31,9 +29,8 @@
          "type" : "Array",
          "defaultValue" : [],
          "metadata": {
-           "description": "Make sure the array size is equal to VM count"
+           "description": "Make sure the array size is equal to VM count, Example: ["Subnet-1","Subnet-2"] "
          }
-         //give smaple
       },
       "subnetNameForAG":{
          "type":"string",
@@ -73,14 +70,14 @@
       "sqlServerImagePublisher":{
          "type":"string",
          "defaultValue":"MicrosoftSQLServer"
-         //make it Non - editable? 
+         //make it Non - editable?  
+         //non -editable is n't possible
          // custom images aren't working
       },
       "sqlServerImageType":{
          "type":"string",
-         "defaultValue":"SQL2016SP2-WS2016"
-         //Enterprise, developer, 
-         // standard? (it supports only 2 vms) 
+         "defaultValue":"SQL2016SP2-WS2016",
+         "allowedValues" : ["SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2-BYOL", "SQL2012SP4-WS2012R2-BYOL", "SQL2012SP4-WS2012R2-BYOL", "SQL2012SP4-WS2012R2-BYOL", "SQL2012SP4-WS2012R2-BYOL", "SQL2012SP4-WS2012R2-BYOL", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP2-WS2012R2-BYOL", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "sql2014sp3-ws2012r2-byol", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016-BYOL", "SQL2016SP1-WS2016-BYOL", "SQL2016SP1-WS2016-BYOL", "SQL2016SP1-WS2016-BYOL", "SQL2016SP1-WS2016-BYOL", "SQL2016SP1-WS2016-BYOL", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2016-BYOL", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019", "sql2016sp2-ws2019-byol", "sql2016sp2-ws2019-byol", "sql2016sp2-ws2019-byol", "sql2016sp2-ws2019-byol", "sql2016sp2-ws2019-byol", "sql2016sp2-ws2019-byol", "sql2016sp3-ws2019", "sql2016sp3-ws2019", "sql2016sp3-ws2019", "sql2016sp3-ws2019", "sql2016sp3-ws2019", "sql2016sp3-ws2019", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "SQL2017-WS2016-BYOL", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2017-ws2019-byol", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2019-byol", "sql2019-ws2022", "sql2019-ws2022", "sql2019-ws2022", "sql2019-ws2022", "sql2019-ws2022", "sql2019-ws2022"]
          // sql 2012 and above
          //windows only -> get list from https://ms.portal.azure.com/#create/Microsoft.AzureSQL
          // include byol images too
@@ -92,20 +89,20 @@
          "allowedValues": [
            "Enterprise",
            "Standard",
-           "Web"
+           "Developer"
          ],
          "metadata": {
            "description": "SQL Server Gallery Image SKU"
          }
+         // standard? (it supports only 2 vms) 
          //provide docs
-         // no web, add developer
       },
       "sqlServerLicenseType":{
          "type":"string",
          "defaultValue":"PAYG",
          "allowedValues": [ "PAYG", "AHUB" ],
          "metadata": {
-             "description": "Specify the SQL Server License type for all VM's."
+             "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits."
          }
       },
       // "existingSqlServiceAccount":{
@@ -145,9 +142,8 @@
          "type":"string",
          "defaultValue":"Standard_D2s_v3",
          "metadata": {
-           "description": "Size of the virtual machine."
+           "description": "Size of the virtual machine. Refer https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile"
          }
-         //allowed list or refer https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile
       },
       "domainJoinUserName":{
          "type":"string",
@@ -198,20 +194,16 @@
       },
       "sqlAvailabilityGroup":{
          "type":"string",
-         "defaultValue":"autoaggroupc",
          "metadata": {
            "description": "Ensure there is no AG with same name registered with domain controller."
          }
-         //remove default
       },
       "ListenerName":{
          "type":"string",
-         "defaultValue":"autoagliste",
          "maxLength" : 15,
          "metadata": {
            "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
          }
-         //remove default
       },
       "ListenerIp":{
          "type":"string",
