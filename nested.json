@@ -5,6 +5,7 @@
       "virtualNetwork":{
          "type":"string",
          "defaultValue":"SQLHAVNET1"
+         // remove default
       },
       // "createSubnets" : {
       //    "type" : "bool",
@@ -32,10 +33,12 @@
          "metadata": {
            "description": "Make sure the array size is equal to VM count"
          }
+         //give smaple
       },
       "subnetNameForAG":{
          "type":"string",
          "defaultValue":"DC-subnet"
+         //Is it needed for multisubnet
       },
       "vmCount":{
          "type":"int",
@@ -70,10 +73,18 @@
       "sqlServerImagePublisher":{
          "type":"string",
          "defaultValue":"MicrosoftSQLServer"
+         //make it Non - editable? 
+         // custom images aren't working
       },
       "sqlServerImageType":{
          "type":"string",
          "defaultValue":"SQL2016SP2-WS2016"
+         //Enterprise, developer, 
+         // standard? (it supports only 2 vms) 
+         // sql 2012 and above
+         //windows only -> get list from https://ms.portal.azure.com/#create/Microsoft.AzureSQL
+         // include byol images too
+         // dropdown https://docs.microsoft.com/en-us/cli/azure/sql/vm?view=azure-cli-latest#az-sql-vm-list
       },
       "sqlServerSku":{
          "type":"string",
@@ -86,6 +97,8 @@
          "metadata": {
            "description": "SQL Server Gallery Image SKU"
          }
+         //provide docs
+         // no web, add developer
       },
       "sqlServerLicenseType":{
          "type":"string",
@@ -118,6 +131,7 @@
            "Static", 
            "Dynamic"
          ]
+         // give option to no public ip ? - generate vm witgour ip
       },
       "publicIpAddressSku":{
          "type":"string",
@@ -133,6 +147,7 @@
          "metadata": {
            "description": "Size of the virtual machine."
          }
+         //allowed list or refer https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile
       },
       "domainJoinUserName":{
          "type":"string",
@@ -157,6 +172,9 @@
          "metadata": {
             "description": "Select the version of SQL Server Image type"
          }
+         //deduce from sql image above . remove this field
+         // check if it is one to one
+         // this is old data
       },
       "loadBalancerName":{
          "type":"string",
@@ -184,6 +202,7 @@
          "metadata": {
            "description": "Ensure there is no AG with same name registered with domain controller."
          }
+         //remove default
       },
       "ListenerName":{
          "type":"string",
@@ -192,6 +211,7 @@
          "metadata": {
            "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
          }
+         //remove default
       },
       "ListenerIp":{
          "type":"string",
