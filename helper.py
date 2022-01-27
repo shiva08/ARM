@@ -3160,11 +3160,10 @@ for b in t:
     if a[p+1:p+3].lower()=="ws":
       if int(a[3:7])>=2016:
         if b["sku"].lower() in ["enterprise","standard","developer"]:
-          offers += [a]
+          offers += [a.upper()]
       elif int(a[3:7])>=2012:
         if b["sku"].lower() in ["enterprise","developer"]:
-          offers += [a]
-    
-        
-print(offers)
+          offers += [a.upper()]
+
+print(sorted(list(set(offers))))
     
