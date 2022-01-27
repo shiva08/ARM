@@ -3157,8 +3157,14 @@ offers = []
 for b in t:
     a = b["offer"]
     p = a.index('-')
-    if b["sku"]!="web" and int(a[3:7])>=2012 and a[p+1:p+3].lower()=="ws":
-        offers += [a]
-
+    if a[p+1:p+3].lower()=="ws":
+      if int(a[3:7])>=2016:
+        if b["sku"].lower() in ["enterprise","standard","developer"]:
+          offers += [a]
+      elif int(a[3:7])>=2012:
+        if b["sku"].lower() in ["enterprise","developer"]:
+          offers += [a]
+    
+        
 print(offers)
     
