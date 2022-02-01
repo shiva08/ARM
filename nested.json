@@ -89,10 +89,9 @@
            "Developer"
          ],
          "metadata": {
-           "description": "SQL Server Gallery Image SKU"
+           "description": "SQL Server Gallery Image SKU. For Standard edition, vmCount<=2"
          }
-         // standard? (it supports only 2 vms) 
-         //provide docs
+         //Add docs
       },
       "sqlServerLicenseType":{
          "type":"string",
