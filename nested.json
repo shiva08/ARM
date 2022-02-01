@@ -3,7 +3,8 @@
    "contentVersion":"1.0.0.0",
    "parameters":{
       "virtualNetwork":{
-         "type":"string"
+         "type":"string",
+         "defaultValue" : "SQLHAVNET1"
       },
       // "createSubnets" : {
       //    "type" : "bool",
@@ -58,7 +59,7 @@
       // },
       "vmPrefix":{
          "type":"string",
-         "defaultValue":"autoaa",
+         "defaultValue":"autodel",
          "metadata": {
            "description": "VMs created : vmPrefix-1, vmPrefix-2"
          }
@@ -109,6 +110,25 @@
       //    "type":"securestring",
       //    "defaultValue":"Contoso!0000"
       // },
+      "sqlConnectivityType":{
+         "type" : "string",
+         "defaultValue" : "Private",
+         "allowedValues" : ["Private", "Public"]
+      },
+      "sqlPortNumber":{
+         "type" : "int",
+         "defaultValue":1433,
+         "minValue" : 1,
+         "maxValue" : 65536
+      },
+      "SQLAuthUpdateUserName": {
+         "type" : "string",
+         "defaultValue" : ""
+      },
+      "SQLAuthUpdatePassword": {
+         "type" : "secureString",
+         "defaultValue" : ""
+      },
       "adminUsername":{
          "type":"string",
          "defaultValue":"DomainAdmin"
@@ -116,6 +136,10 @@
       "adminPassword":{
          "type":"secureString",
          "defaultValue":"Contoso!0000"
+      },
+      "createPublicIpAddress":{
+         "type": "bool",
+         "defaultValue" : false
       },
       "publicIpAddressType":{
          "type":"string",
@@ -140,6 +164,86 @@
          "metadata": {
            "description": "Size of the virtual machine. Refer https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile"
          }
+      },
+      "KeyVaultCredentialEnabled": {
+         "type" : "bool",
+         "defaultValue" : false
+      },
+      "sqlAkvCredentialName" : { 
+         "type" : "string",
+         "defaultValue" : ""
+      },
+      "sqlAkvUrl" : { 
+         "type" : "string",
+         "defaultValue" : ""
+      },
+      "sqlAkvPrincipalName" : { 
+         "type" : "string",
+         "defaultValue" : ""
+      },
+      "sqlAkvPrincipalSecret": {
+         "type" : "string", 
+         "defaultValue" : ""
+      },
+      "dataPath":{
+         "type" : "string",
+         "defaultValue":"F:\\data"
+      },
+      "logPath":{
+         "type" : "string",
+         "defaultValue":"G:\\log"
+      },
+      "maxdop": {
+         "type": "int",
+         "defaultValue" : 0
+      },
+      "isOptimizeForAdHocWorkloadsEnabled": {
+         "type": "bool",
+         "defaultValue" : false
+      },
+      "collation": {
+         "type": "string",
+         "defaultValue" : "SQL_Latin1_General_CP1_CI_AS"
+      },
+      "minServerMemoryMB": {
+         "type": "int",
+         "defaultValue" : 0
+      },
+      "maxServerMemoryMB": {
+         "type": "int",
+         "defaultValue" : 2147483647
+      },
+      "enableAcceleratedNetworking":{
+         "type" : "bool",
+         "defaultValue": true
+      },
+      "tempDbPath": {
+         "type": "string",
+         "defaultValue" : "D:\\tempDb"
+      },
+      "dataFileCount": {
+         "type": "int",
+         "defaultValue" : 2
+      },
+      "dataFileSize": {
+         "type": "int",
+         "defaultValue" : 8
+      },
+      "dataGrowth": {
+         "type": "int",
+         "defaultValue" : 64
+      },
+      "logFileSize": {
+         "type": "int",
+         "defaultValue" : 8
+      },
+      "logGrowth": {
+         "type": "int",
+         "defaultValue" : 64
+      },
+      "SQLSystemDbOnDataDisk": {
+         "type": "bool",
+         "defaultValue" : false
       },
       "domainJoinUserName":{
          "type":"string",
@@ -192,14 +296,16 @@
          "type":"string",
          "metadata": {
            "description": "Ensure there is no AG with same name registered with domain controller."
-         }
+         },
+         "defaultValue" : "dels"
       },
       "ListenerName":{
          "type":"string",
          "maxLength" : 15,
          "metadata": {
            "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
-         }
+         },
+         "defaultValue" : "dels1"
       },
       "ListenerIp":{
          "type":"string",
@@ -207,7 +313,7 @@
       }
    },
    "variables":{
-      "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
+      // "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
       "copy":[
          {
             "name":"vmArrayHelper",
@@ -230,8 +336,8 @@
       // "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') ) ]" ,
       // "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
 
-      "subnetArray" : "[ parameters('subnetNamesArray') ) ]",
-      "vmArray" : "[ variables('vmArrayHelper')) ]",
+      // "subnetArray" : "[ parameters('subnetNamesArray') ) ]",
+      "vmArray" : "[ variables('vmArrayHelper') ]",
 
 
 
@@ -331,9 +437,9 @@
          "type":"Microsoft.Resources/deployments",
          "apiVersion":"2021-04-01",
          "name":"[concat('create-sqlvm', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
-         "dependsOn":[
-            "Add-Subnet-To-Vnet"
-         ],
+         // "dependsOn":[
+         //    "Add-Subnet-To-Vnet"
+         // ],
          "copy":{
             "name":"Create-SQLVM",
             "count":"[parameters('vmCount')]",
@@ -368,6 +474,9 @@
                  },
                  "virtualNetworkId": {
                      "type": "string"
+                 },
+                 "createPublicIpAddress" : {
+                     "type" : "bool"
                  },
                  "publicIpAddressName": {
                      "type": "string"
@@ -423,7 +532,13 @@
                  "sqlPortNumber": {
                      "type": "int"
                  },
-                 "sqlStorageDisksCount": {
+                 "SQLAuthUpdateUserName": {
+                     "type" : "string"
+                 },
+                 "SQLAuthUpdatePassword": {
+                     "type" : "secureString"
+                  },
+                  "sqlStorageDisksCount": {
                      "type": "int"
                  },
                  "sqlStorageWorkloadType": {
@@ -476,7 +591,58 @@
                  },
                  "sqlServerImagePublisher": {
                      "type" : "string"
-                 }
+                 },
+                 "maxdop": {
+                     "type": "int"
+                 },
+                 "isOptimizeForAdHocWorkloadsEnabled": {
+                     "type": "bool"
+                 },
+                 "collation": {
+                     "type": "string"
+                 },
+                 "minServerMemoryMB": {
+                     "type": "int"
+                 },
+                 "maxServerMemoryMB": {
+                     "type": "int"
+                 },
+                 "tempDbPath": {
+                     "type": "string"
+                 },
+                 "dataFileCount": {
+                     "type": "int"
+                 },
+                 "dataFileSize": {
+                     "type": "int"
+                 },
+                 "dataGrowth": {
+                     "type": "int"
+                 },
+                 "logFileSize": {
+                     "type": "int"
+                 },
+                 "logGrowth": {
+                     "type": "int"
+                 },
+                 "SQLSystemDbOnDataDisk": {
+                     "type": "bool"
+                 },
+                 "KeyVaultCredentialEnabled": {
+                     "type" : "bool"
+                 },
+                 "sqlAkvCredentialName" : { 
+                     "type" : "string"
+                  },
+                 "sqlAkvUrl" : { 
+                     "type" : "string"
+                  },
+                 "sqlAkvPrincipalName" : { 
+                     "type" : "string"
+                  },
+                 "sqlAkvPrincipalSecret": { 
+                     "type" : "string"
+                  }
                },
                "variables": {
                  "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
@@ -502,9 +668,12 @@
                                          "id": "[variables('subnetRef')]"
                                      },
                                      "privateIPAllocationMethod": "Dynamic",
-                                     "publicIpAddress": {
-                                         "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
-                                     }
+                                     "publicIpAddress": 
+                                       "[if(parameters('createPublicIpAddress'), createObject('id', resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName')) ),json('null') )]"
+
+                                     // {
+                                     //     "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+                                     // }
                                  }
                              }
                          ],
@@ -524,6 +693,7 @@
                      }
                  },
                  {
+                     "condition" : "[parameters('createPublicIpAddress')]",
                      "name": "[parameters('publicIpAddressName')]",
                      "type": "Microsoft.Network/publicIpAddresses",
                      "apiVersion": "2019-02-01",
@@ -636,8 +806,11 @@
                              "MaintenanceWindowDuration": "[parameters('sqlAutopatchingWindowDuration')]"
                          },
                          "KeyVaultCredentialSettings": {
-                             "Enable": false,
-                             "CredentialName": ""
+                             "Enable": "[parameters('KeyVaultCredentialEnabled')]",
+                             "CredentialName": "[parameters('sqlAkvCredentialName')]",
+                             "AzureKeyVaultUrl": "[parameters('sqlAkvUrl')]",
+                             "ServicePrincipalName": "[parameters('sqlAkvPrincipalName')]",
+                             "ServicePrincipalSecret": "[parameters('sqlAkvPrincipalSecret')]"
                          },
                          "StorageConfigurationSettings": {
                              "DiskConfigurationType": "[parameters('sqlStorageDisksConfigurationType')]",
@@ -651,19 +824,32 @@
                                  "DefaultFilePath": "[parameters('logPath')]"
                              },
                              "SQLTempDbSettings": {
-                                 "DefaultFilePath": "[parameters('tempDbPath')]"
-                             }
+                                 "DefaultFilePath": "[parameters('tempDbPath')]",
+                                 "DataFileCount": "[parameters('dataFileCount')]",
+                                 "DataFileSize": "[parameters('dataFileSize')]",
+                                 "DataGrowth": "[parameters('dataGrowth')]",
+                                 "LogFileSize": "[parameters('logFileSize')]",
+                                 "LogGrowth": "[parameters('logGrowth')]"
+                             },
+                             "SQLSystemDbOnDataDisk": "[parameters('SQLSystemDbOnDataDisk')]"
                          },
                          "ServerConfigurationsManagementSettings": {
                              "SQLConnectivityUpdateSettings": {
                                  "ConnectivityType": "[parameters('sqlConnectivityType')]",
                                  "Port": "[parameters('sqlPortNumber')]",
-                                 "SQLAuthUpdateUserName": "",
-                                 "SQLAuthUpdatePassword": ""
+                                 "SQLAuthUpdateUserName": "[parameters('SQLAuthUpdateUserName')]", 
+                                 "SQLAuthUpdatePassword": "[parameters('SQLAuthUpdatePassword')]"
                              },
                              "AdditionalFeaturesServerConfigurations": {
                                  "IsRServicesEnabled": "[parameters('rServicesEnabled')]"
-                             }
+                             },
+                             "SQLInstanceSettings": {
+                                 "maxDop": "[parameters('maxdop')]",
+                                 "isOptimizeForAdHocWorkloadsEnabled": "[parameters('isOptimizeForAdHocWorkloadsEnabled')]",
+                                 "collation": "[parameters('collation')]",
+                                 "minServerMemoryMB": "[parameters('minServerMemoryMB')]",
+                                 "maxServerMemoryMB": "[parameters('maxServerMemoryMB')]"
+                              }
                          }
                      },
                      "dependsOn": [
@@ -679,6 +865,7 @@
                }
             },
             "parameters":{
+
                "sqlServerSku":{
                   "value":"[parameters('sqlServerSku')]"
                },
@@ -698,7 +885,7 @@
                   "value":"[concat(variables('vmArray')[copyIndex()],'-ni')]"
                },
                "enableAcceleratedNetworking":{
-                  "value":true
+                  "value": "[parameters('enableAcceleratedNetworking')]"
                },
                "networkSecurityGroupName":{
                   "value":"[concat(variables('vmArray')[copyIndex()],'-nsg')]"
@@ -714,6 +901,9 @@
                },
                "virtualNetworkId":{
                   "value":"[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
+               },
+               "createPublicIpAddress" : {
+                  "value" : "[parameters('createPublicIpAddress')]"
                },
                "publicIpAddressName":{
                   "value":"[concat(variables('vmArray')[copyIndex()],'-ip')]"
@@ -808,10 +998,16 @@
                   "value":"[variables('vmArray')[copyIndex()]]"
                },
                "sqlConnectivityType":{
-                  "value":"Private"
+                  "value": "[parameters('sqlConnectivityType')]"
                },
                "sqlPortNumber":{
-                  "value":1433
+                  "value": "[parameters('sqlPortNumber')]"
+               },
+               "SQLAuthUpdateUserName": {
+                  "value" : "[parameters('SQLAuthUpdateUserName')]"
+               },
+               "SQLAuthUpdatePassword": {
+                  "value" : "[parameters('SQLAuthUpdatePassword')]"
                },
                "sqlStorageDisksCount":{
                   "value":1
@@ -838,7 +1034,7 @@
                   "value":"60"
                },
                "dataPath":{
-                  "value":"F:\\data"
+                  "value":"[parameters('dataPath')]"
                },
                "dataDisksLUNs":{
                   "value":[
@@ -846,7 +1042,7 @@
                   ]
                },
                "logPath":{
-                  "value":"G:\\log"
+                  "value":"[parameters('logPath')]"
                },
                "logDisksLUNs":{
                   "value":[
@@ -854,14 +1050,63 @@
                   ]
                },
                "tempDbPath":{
-                  "value":"D:\\tempDb"
+                  "value":"[parameters('tempDbPath')]"
                },
                "rServicesEnabled":{
                   "value":"false"
-               }
+               },
+               "KeyVaultCredentialEnabled": {
+                  "value" : "[parameters('KeyVaultCredentialEnabled')]"
+               },
+               "sqlAkvCredentialName" : { 
+                  "value" : "[parameters('sqlAkvCredentialName')]"
+               },
+               "sqlAkvUrl" : { 
+                  "value" : "[parameters('sqlAkvUrl')]"
+               },
+               "sqlAkvPrincipalName" : { 
+                  "value" : "[parameters('sqlAkvPrincipalName')]"
+               },
+               "sqlAkvPrincipalSecret": { 
+                  "value" : "[parameters('sqlAkvPrincipalSecret')]"
+               },
+               "maxdop": {
+                  "value" : "[parameters('maxdop')]"
+               },
+               "isOptimizeForAdHocWorkloadsEnabled": {
+                  "value" : "[parameters('isOptimizeForAdHocWorkloadsEnabled')]"
+               },
+               "collation": {
+                  "value" : "[parameters('collation')]"
+               },
+               "minServerMemoryMB": {
+                  "value" : "[parameters('minServerMemoryMB')]"
+               },
+               "maxServerMemoryMB": {
+                  "value" : "[parameters('maxServerMemoryMB')]"
+               },
+              "dataFileCount": {
+                  "value": "[parameters('dataFileCount')]"
+              },
+              "dataFileSize": {
+                  "value": "[parameters('dataFileSize')]"
+              },
+              "dataGrowth": {
+                  "value": "[parameters('dataGrowth')]"
+              },
+              "logFileSize": {
+                  "value": "[parameters('logFileSize')]"
+              },
+              "logGrowth": {
+                  "value": "[parameters('logGrowth')]"
+              },
+              "SQLSystemDbOnDataDisk": {
+                  "value": "[parameters('SQLSystemDbOnDataDisk')]"
+              }
             }
          }
-      },
+      }
+      ,
       {
          "type":"Microsoft.Resources/deployments",
          "apiVersion":"2021-04-01",
@@ -899,7 +1144,7 @@
                   }
                 },
                 "domainJoinUserPassword": {
-                  "type": "securestring",
+                  "type": "secureString",
                   "metadata": {
                     "description": "Domain user password"
                   }
