@@ -1,5 +1,5 @@
-# On azure cli , run az vm image list --all --publisher MicrosoftSQLServer >>p.txt
 import json
+
 t = [
   {
     "offer": "SQL2008R2SP3-WS2008R2SP1",
@@ -3152,6 +3152,11 @@ t = [
     "version": "15.0.220111"
   }
 ]
+
+# On azure cli , run az vm image list --all --publisher MicrosoftSQLServer >>p.txt
+# Find images for windows server
+# if SQL >= 2016, SKU should be in enterprise, standard, developer
+# if SQL >= 2012, SKU should be in enterprise, developer
 
 offers = []
 for b in t:
