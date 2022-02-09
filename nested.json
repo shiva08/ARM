@@ -1715,8 +1715,10 @@
                                        "input": {
                                            "sqlVirtualMachineInstanceId": "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
                                            "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
-                                           "failover": "Automatic",
-                                           "commit": "Synchronous_Commit",
+                                           "failover": "Manual",      
+                                           // "Automatic
+                                           "commit": "Asynchronous_Commit",
+                                             // "Synchronous_Commit" can't handle more than 2 replicas
                                            "readableSecondary": "All"
                                        }
                                      }
