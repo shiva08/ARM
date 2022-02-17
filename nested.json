@@ -6,6 +6,10 @@
       "type": "string",
       "defaultValue": "SQLHAVNET1"
     },
+    "location": {
+      "type" : "string",
+      "defaultValue":"[resourceGroup().location]"
+    },
     // "createSubnets" : {
     //    "type" : "bool",
     //    "defaultValue" : "[false()]"
@@ -59,7 +63,7 @@
     // },
     "vmPrefix": {
       "type": "string",
-      "defaultValue": "autodel",
+      "defaultValue": "autovmprefix",
       "metadata": {
         "description": "VMs created : vmPrefix-1, vmPrefix-2"
       }
@@ -255,7 +259,7 @@
     },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "autofc",
+      "defaultValue": "autofailcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -274,7 +278,7 @@
     },
     "loadBalancerName": {
       "type": "string",
-      "defaultValue": "autoloadc"
+      "defaultValue": "autoloadbalance"
     },
     "loadBalancerSku": {
       "type": "string",
@@ -297,7 +301,7 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "dels"
+      "defaultValue": "autoag"
     },
     "ListenerName": {
       "type": "string",
@@ -305,7 +309,7 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "dels1"
+      "defaultValue": "autolistener"
     },
     "ListenerIp": {
       "type": "string",
@@ -526,60 +530,60 @@
             "sqlVirtualMachineName": {
               "type": "string"
             },
-            "sqlConnectivityType": {
-              "type": "string"
-            },
-            "sqlPortNumber": {
-              "type": "int"
-            },
-            "SQLAuthUpdateUserName": {
-              "type": "string"
-            },
-            "SQLAuthUpdatePassword": {
-              "type": "secureString"
-            },
-            "sqlStorageDisksCount": {
-              "type": "int"
-            },
-            "sqlStorageWorkloadType": {
-              "type": "string"
-            },
-            "sqlStorageDisksConfigurationType": {
-              "type": "string"
-            },
-            "sqlStorageStartingDeviceId": {
-              "type": "int"
-            },
-            "sqlStorageDeploymentToken": {
-              "type": "int"
-            },
-            "sqlAutopatchingDayOfWeek": {
-              "type": "string"
-            },
-            "sqlAutopatchingStartHour": {
-              "type": "string"
-            },
-            "sqlAutopatchingWindowDuration": {
-              "type": "string"
-            },
-            "dataPath": {
-              "type": "string"
-            },
-            "dataDisksLUNs": {
-              "type": "array"
-            },
-            "logPath": {
-              "type": "string"
-            },
-            "logDisksLUNs": {
-              "type": "array"
-            },
-            "tempDbPath": {
-              "type": "string"
-            },
-            "rServicesEnabled": {
-              "type": "string"
-            },
+            // "sqlConnectivityType": {
+            //   "type": "string"
+            // },
+            // "sqlPortNumber": {
+            //   "type": "int"
+            // },
+            // "SQLAuthUpdateUserName": {
+            //   "type": "string"
+            // },
+            // "SQLAuthUpdatePassword": {
+            //   "type": "secureString"
+            // },
+            // "sqlStorageDisksCount": {
+            //   "type": "int"
+            // },
+            // "sqlStorageWorkloadType": {
+            //   "type": "string"
+            // },
+            // "sqlStorageDisksConfigurationType": {
+            //   "type": "string"
+            // },
+            // "sqlStorageStartingDeviceId": {
+            //   "type": "int"
+            // },
+            // "sqlStorageDeploymentToken": {
+            //   "type": "int"
+            // },
+            // "sqlAutopatchingDayOfWeek": {
+            //   "type": "string"
+            // },
+            // "sqlAutopatchingStartHour": {
+            //   "type": "string"
+            // },
+            // "sqlAutopatchingWindowDuration": {
+            //   "type": "string"
+            // },
+            // "dataPath": {
+            //   "type": "string"
+            // },
+            // "dataDisksLUNs": {
+            //   "type": "array"
+            // },
+            // "logPath": {
+            //   "type": "string"
+            // },
+            // "logDisksLUNs": {
+            //   "type": "array"
+            // },
+            // "tempDbPath": {
+            //   "type": "string"
+            // },
+            // "rServicesEnabled": {
+            //   "type": "string"
+            // },
             "sqlServerImageType": {
               "type": "string"
             },
@@ -591,58 +595,59 @@
             },
             "sqlServerImagePublisher": {
               "type": "string"
-            },
-            "maxdop": {
-              "type": "int"
-            },
-            "isOptimizeForAdHocWorkloadsEnabled": {
-              "type": "bool"
-            },
-            "collation": {
-              "type": "string"
-            },
-            "minServerMemoryMB": {
-              "type": "int"
-            },
-            "maxServerMemoryMB": {
-              "type": "int"
-            },
-            "tempDbPath": {
-              "type": "string"
-            },
-            "dataFileCount": {
-              "type": "int"
-            },
-            "dataFileSize": {
-              "type": "int"
-            },
-            "dataGrowth": {
-              "type": "int"
-            },
-            "logFileSize": {
-              "type": "int"
-            },
-            "logGrowth": {
-              "type": "int"
-            },
-            "SQLSystemDbOnDataDisk": {
-              "type": "bool"
-            },
-            "KeyVaultCredentialEnabled": {
-              "type": "bool"
-            },
-            "sqlAkvCredentialName": {
-              "type": "string"
-            },
-            "sqlAkvUrl": {
-              "type": "string"
-            },
-            "sqlAkvPrincipalName": {
-              "type": "string"
-            },
-            "sqlAkvPrincipalSecret": {
-              "type": "string"
             }
+            // ,
+            // "maxdop": {
+            //   "type": "int"
+            // },
+            // "isOptimizeForAdHocWorkloadsEnabled": {
+            //   "type": "bool"
+            // },
+            // "collation": {
+            //   "type": "string"
+            // },
+            // "minServerMemoryMB": {
+            //   "type": "int"
+            // },
+            // "maxServerMemoryMB": {
+            //   "type": "int"
+            // },
+            // "tempDbPath": {
+            //   "type": "string"
+            // },
+            // "dataFileCount": {
+            //   "type": "int"
+            // },
+            // "dataFileSize": {
+            //   "type": "int"
+            // },
+            // "dataGrowth": {
+            //   "type": "int"
+            // },
+            // "logFileSize": {
+            //   "type": "int"
+            // },
+            // "logGrowth": {
+            //   "type": "int"
+            // },
+            // "SQLSystemDbOnDataDisk": {
+            //   "type": "bool"
+            // },
+            // "KeyVaultCredentialEnabled": {
+            //   "type": "bool"
+            // },
+            // "sqlAkvCredentialName": {
+            //   "type": "string"
+            // },
+            // "sqlAkvUrl": {
+            //   "type": "string"
+            // },
+            // "sqlAkvPrincipalName": {
+            //   "type": "string"
+            // },
+            // "sqlAkvPrincipalSecret": {
+            //   "type": "string"
+            // }
           },
           "variables": {
             "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
@@ -654,7 +659,7 @@
               "name": "[parameters('networkInterfaceName')]",
               "type": "Microsoft.Network/networkInterfaces",
               "apiVersion": "2021-03-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]",
                 "[concat('Microsoft.Network/publicIpAddresses/', parameters('publicIpAddressName'))]"
@@ -686,7 +691,7 @@
               "name": "[parameters('networkSecurityGroupName')]",
               "type": "Microsoft.Network/networkSecurityGroups",
               "apiVersion": "2019-02-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "properties": {
                 "securityRules": "[parameters('networkSecurityGroupRules')]"
               }
@@ -696,7 +701,7 @@
               "name": "[parameters('publicIpAddressName')]",
               "type": "Microsoft.Network/publicIpAddresses",
               "apiVersion": "2019-02-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "properties": {
                 "publicIpAllocationMethod": "[parameters('publicIpAddressType')]"
               },
@@ -708,7 +713,7 @@
               "name": "[parameters('dataDiskResources')[copyIndex()].name]",
               "type": "Microsoft.Compute/disks",
               "apiVersion": "2020-12-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "properties": "[parameters('dataDiskResources')[copyIndex()].properties]",
               "sku": {
                 "name": "[parameters('dataDiskResources')[copyIndex()].sku]"
@@ -722,7 +727,7 @@
               "name": "[parameters('virtualMachineName')]",
               "type": "Microsoft.Compute/virtualMachines",
               "apiVersion": "2021-07-01",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "dependsOn": [
                 "managedDiskResources",
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
@@ -797,60 +802,61 @@
               "properties": {
                 "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]",
                 "sqlManagement": "Full",
-                "SqlServerLicenseType": "[parameters('sqlServerLicenseType')]",
-                "AutoPatchingSettings": {
-                  "Enable": true,
-                  "DayOfWeek": "[parameters('sqlAutopatchingDayOfWeek')]",
-                  "MaintenanceWindowStartingHour": "[parameters('sqlAutopatchingStartHour')]",
-                  "MaintenanceWindowDuration": "[parameters('sqlAutopatchingWindowDuration')]"
-                },
-                "KeyVaultCredentialSettings": {
-                  "Enable": "[parameters('KeyVaultCredentialEnabled')]",
-                  "CredentialName": "[parameters('sqlAkvCredentialName')]"
-                  // ,
-                  // "AzureKeyVaultUrl": "[parameters('sqlAkvUrl')]",
-                  // "ServicePrincipalName": "[parameters('sqlAkvPrincipalName')]",
-                  // "ServicePrincipalSecret": "[parameters('sqlAkvPrincipalSecret')]"
-                },
-                "StorageConfigurationSettings": {
-                  "DiskConfigurationType": "[parameters('sqlStorageDisksConfigurationType')]",
-                  "StorageWorkloadType": "[parameters('sqlStorageWorkloadType')]",
-                  "SQLDataSettings": {
-                    "LUNs": "[parameters('dataDisksLUNs')]",
-                    "DefaultFilePath": "[parameters('dataPath')]"
-                  },
-                  "SQLLogSettings": {
-                    "LUNs": "[parameters('logDisksLUNs')]",
-                    "DefaultFilePath": "[parameters('logPath')]"
-                  },
-                  "SQLTempDbSettings": {
-                    "DefaultFilePath": "[parameters('tempDbPath')]",
-                    "DataFileCount": "[parameters('dataFileCount')]",
-                    "DataFileSize": "[parameters('dataFileSize')]",
-                    "DataGrowth": "[parameters('dataGrowth')]",
-                    "LogFileSize": "[parameters('logFileSize')]",
-                    "LogGrowth": "[parameters('logGrowth')]"
-                  },
-                  "SQLSystemDbOnDataDisk": "[parameters('SQLSystemDbOnDataDisk')]"
-                },
-                "ServerConfigurationsManagementSettings": {
-                  "SQLConnectivityUpdateSettings": {
-                    "ConnectivityType": "[parameters('sqlConnectivityType')]",
-                    "Port": "[parameters('sqlPortNumber')]",
-                    "SQLAuthUpdateUserName": "[parameters('SQLAuthUpdateUserName')]",
-                    "SQLAuthUpdatePassword": "[parameters('SQLAuthUpdatePassword')]"
-                  },
-                  "AdditionalFeaturesServerConfigurations": {
-                    "IsRServicesEnabled": "[parameters('rServicesEnabled')]"
-                  },
-                  "SQLInstanceSettings": {
-                    "maxDop": "[parameters('maxdop')]",
-                    "isOptimizeForAdHocWorkloadsEnabled": "[parameters('isOptimizeForAdHocWorkloadsEnabled')]",
-                    "collation": "[parameters('collation')]",
-                    "minServerMemoryMB": "[parameters('minServerMemoryMB')]",
-                    "maxServerMemoryMB": "[parameters('maxServerMemoryMB')]"
-                  }
-                }
+                "SqlServerLicenseType": "[parameters('sqlServerLicenseType')]"
+                // ,
+                // "AutoPatchingSettings": {
+                //   "Enable": true,
+                //   "DayOfWeek": "[parameters('sqlAutopatchingDayOfWeek')]",
+                //   "MaintenanceWindowStartingHour": "[parameters('sqlAutopatchingStartHour')]",
+                //   "MaintenanceWindowDuration": "[parameters('sqlAutopatchingWindowDuration')]"
+                // },
+                // "KeyVaultCredentialSettings": {
+                //   "Enable": "[parameters('KeyVaultCredentialEnabled')]",
+                //   "CredentialName": "[parameters('sqlAkvCredentialName')]"
+                //   // ,
+                //   // "AzureKeyVaultUrl": "[parameters('sqlAkvUrl')]",
+                //   // "ServicePrincipalName": "[parameters('sqlAkvPrincipalName')]",
+                //   // "ServicePrincipalSecret": "[parameters('sqlAkvPrincipalSecret')]"
+                // },
+                // "StorageConfigurationSettings": {
+                //   "DiskConfigurationType": "[parameters('sqlStorageDisksConfigurationType')]",
+                //   "StorageWorkloadType": "[parameters('sqlStorageWorkloadType')]",
+                //   "SQLDataSettings": {
+                //     "LUNs": "[parameters('dataDisksLUNs')]",
+                //     "DefaultFilePath": "[parameters('dataPath')]"
+                //   },
+                //   "SQLLogSettings": {
+                //     "LUNs": "[parameters('logDisksLUNs')]",
+                //     "DefaultFilePath": "[parameters('logPath')]"
+                //   },
+                //   "SQLTempDbSettings": {
+                //     "DefaultFilePath": "[parameters('tempDbPath')]",
+                //     "DataFileCount": "[parameters('dataFileCount')]",
+                //     "DataFileSize": "[parameters('dataFileSize')]",
+                //     "DataGrowth": "[parameters('dataGrowth')]",
+                //     "LogFileSize": "[parameters('logFileSize')]",
+                //     "LogGrowth": "[parameters('logGrowth')]"
+                //   },
+                //   "SQLSystemDbOnDataDisk": "[parameters('SQLSystemDbOnDataDisk')]"
+                // },
+                // "ServerConfigurationsManagementSettings": {
+                //   "SQLConnectivityUpdateSettings": {
+                //     "ConnectivityType": "[parameters('sqlConnectivityType')]",
+                //     "Port": "[parameters('sqlPortNumber')]",
+                //     "SQLAuthUpdateUserName": "[parameters('SQLAuthUpdateUserName')]",
+                //     "SQLAuthUpdatePassword": "[parameters('SQLAuthUpdatePassword')]"
+                //   },
+                //   "AdditionalFeaturesServerConfigurations": {
+                //     "IsRServicesEnabled": "[parameters('rServicesEnabled')]"
+                //   },
+                //   "SQLInstanceSettings": {
+                //     "maxDop": "[parameters('maxdop')]",
+                //     "isOptimizeForAdHocWorkloadsEnabled": "[parameters('isOptimizeForAdHocWorkloadsEnabled')]",
+                //     "collation": "[parameters('collation')]",
+                //     "minServerMemoryMB": "[parameters('minServerMemoryMB')]",
+                //     "maxServerMemoryMB": "[parameters('maxServerMemoryMB')]"
+                //   }
+                // }
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]"
@@ -879,7 +885,7 @@
             "value": "[parameters('sqlServerLicenseType')]"
           },
           "location": {
-            "value": "[resourceGroup().location]"
+            "value": "[parameters('location')]"
           },
           "networkInterfaceName": {
             "value": "[concat(variables('vmArray')[copyIndex()],'-ni')]"
@@ -996,140 +1002,141 @@
             "value": false
           },
           "sqlVirtualMachineLocation": {
-            "value": "[resourceGroup().location]"
+            "value": "[parameters('location')]"
           },
           "sqlVirtualMachineName": {
             "value": "[variables('vmArray')[copyIndex()]]"
-          },
-          "sqlConnectivityType": {
-            "value": "Private"
-            // "[parameters('sqlConnectivityType')]"
-          },
-          "sqlPortNumber": {
-            "value": 1433
-            // "[parameters('sqlPortNumber')]"
-          },
-          "SQLAuthUpdateUserName": {
-            "value": ""
-            // "[parameters('SQLAuthUpdateUserName')]"
-          },
-          "SQLAuthUpdatePassword": {
-            "value": ""
-            // "[parameters('SQLAuthUpdatePassword')]"
-          },
-          "sqlStorageDisksCount": {
-            "value": 1
-          },
-          "sqlStorageWorkloadType": {
-            "value": "OLTP"
-          },
-          "sqlStorageDisksConfigurationType": {
-            "value": "NEW"
-          },
-          "sqlStorageStartingDeviceId": {
-            "value": 2
-          },
-          "sqlStorageDeploymentToken": {
-            "value": 35240
-          },
-          "sqlAutopatchingDayOfWeek": {
-            "value": "Sunday"
-          },
-          "sqlAutopatchingStartHour": {
-            "value": "2"
-          },
-          "sqlAutopatchingWindowDuration": {
-            "value": "60"
-          },
-          "dataPath": {
-            "value": "F:\\data"
-            // "[parameters('dataPath')]"
-          },
-          "dataDisksLUNs": {
-            "value": [
-              0
-            ]
-          },
-          "logPath": {
-            "value": "G:\\log"
-            // "[parameters('logPath')]"
-          },
-          "logDisksLUNs": {
-            "value": [
-              1
-            ]
-          },
-          "tempDbPath": {
-            "value": "D:\\tempDb"
-            // "[parameters('tempDbPath')]"
-          },
-          "rServicesEnabled": {
-            "value": "false"
-          },
-          "KeyVaultCredentialEnabled": {
-            "value": false
-            // "[parameters('KeyVaultCredentialEnabled')]"
-          },
-          "sqlAkvCredentialName": {
-            "value": ""
-            // "[parameters('sqlAkvCredentialName')]"
-          },
-          "sqlAkvUrl": {
-            "value": ""
-            // "[parameters('sqlAkvUrl')]"
-          },
-          "sqlAkvPrincipalName": {
-            "value": ""
-            // "[parameters('sqlAkvPrincipalName')]"
-          },
-          "sqlAkvPrincipalSecret": {
-            "value": ""
-            // "[parameters('sqlAkvPrincipalSecret')]"
-          },
-          "maxdop": {
-            "value": 0
-            // "[parameters('maxdop')]"
-          },
-          "isOptimizeForAdHocWorkloadsEnabled": {
-            "value": false
-            // "[parameters('isOptimizeForAdHocWorkloadsEnabled')]"
-          },
-          "collation": {
-            "value": "SQL_Latin1_General_CP1_CI_AS"
-            // "[parameters('collation')]"
-          },
-          "minServerMemoryMB": {
-            "value": 0
-            // "[parameters('minServerMemoryMB')]"
-          },
-          "maxServerMemoryMB": {
-            "value": 2147483647
-            // "[parameters('maxServerMemoryMB')]"
-          },
-          "dataFileCount": {
-            "value": 2
-            // "[parameters('dataFileCount')]"
-          },
-          "dataFileSize": {
-            "value": 8
-            // "[parameters('dataFileSize')]"
-          },
-          "dataGrowth": {
-            "value": 64
-            // "[parameters('dataGrowth')]"
-          },
-          "logFileSize": {
-            "value": 8
-            // "[parameters('logFileSize')]"
-          },
-          "logGrowth": {
-            "value": 64
-            // "[parameters('logGrowth')]"
-          },
-          "SQLSystemDbOnDataDisk": {
-            "value": false
-            // "[parameters('SQLSystemDbOnDataDisk')]"
           }
+          // ,
+          // "sqlConnectivityType": {
+          //   "value": "Private"
+          //   // "[parameters('sqlConnectivityType')]"
+          // },
+          // "sqlPortNumber": {
+          //   "value": 1433
+          //   // "[parameters('sqlPortNumber')]"
+          // },
+          // "SQLAuthUpdateUserName": {
+          //   "value": ""
+          //   // "[parameters('SQLAuthUpdateUserName')]"
+          // },
+          // "SQLAuthUpdatePassword": {
+          //   "value": ""
+          //   // "[parameters('SQLAuthUpdatePassword')]"
+          // },
+          // "sqlStorageDisksCount": {
+          //   "value": 1
+          // },
+          // "sqlStorageWorkloadType": {
+          //   "value": "OLTP"
+          // },
+          // "sqlStorageDisksConfigurationType": {
+          //   "value": "NEW"
+          // },
+          // "sqlStorageStartingDeviceId": {
+          //   "value": 2
+          // },
+          // "sqlStorageDeploymentToken": {
+          //   "value": 35240
+          // },
+          // "sqlAutopatchingDayOfWeek": {
+          //   "value": "Sunday"
+          // },
+          // "sqlAutopatchingStartHour": {
+          //   "value": "2"
+          // },
+          // "sqlAutopatchingWindowDuration": {
+          //   "value": "60"
+          // },
+          // "dataPath": {
+          //   "value": "F:\\data"
+          //   // "[parameters('dataPath')]"
+          // },
+          // "dataDisksLUNs": {
+          //   "value": [
+          //     0
+          //   ]
+          // },
+          // "logPath": {
+          //   "value": "G:\\log"
+          //   // "[parameters('logPath')]"
+          // },
+          // "logDisksLUNs": {
+          //   "value": [
+          //     1
+          //   ]
+          // },
+          // "tempDbPath": {
+          //   "value": "D:\\tempDb"
+          //   // "[parameters('tempDbPath')]"
+          // },
+          // "rServicesEnabled": {
+          //   "value": "false"
+          // },
+          // "KeyVaultCredentialEnabled": {
+          //   "value": false
+          //   // "[parameters('KeyVaultCredentialEnabled')]"
+          // },
+          // "sqlAkvCredentialName": {
+          //   "value": ""
+          //   // "[parameters('sqlAkvCredentialName')]"
+          // },
+          // "sqlAkvUrl": {
+          //   "value": ""
+          //   // "[parameters('sqlAkvUrl')]"
+          // },
+          // "sqlAkvPrincipalName": {
+          //   "value": ""
+          //   // "[parameters('sqlAkvPrincipalName')]"
+          // },
+          // "sqlAkvPrincipalSecret": {
+          //   "value": ""
+          //   // "[parameters('sqlAkvPrincipalSecret')]"
+          // },
+          // "maxdop": {
+          //   "value": 0
+          //   // "[parameters('maxdop')]"
+          // },
+          // "isOptimizeForAdHocWorkloadsEnabled": {
+          //   "value": false
+          //   // "[parameters('isOptimizeForAdHocWorkloadsEnabled')]"
+          // },
+          // "collation": {
+          //   "value": "SQL_Latin1_General_CP1_CI_AS"
+          //   // "[parameters('collation')]"
+          // },
+          // "minServerMemoryMB": {
+          //   "value": 0
+          //   // "[parameters('minServerMemoryMB')]"
+          // },
+          // "maxServerMemoryMB": {
+          //   "value": 2147483647
+          //   // "[parameters('maxServerMemoryMB')]"
+          // },
+          // "dataFileCount": {
+          //   "value": 2
+          //   // "[parameters('dataFileCount')]"
+          // },
+          // "dataFileSize": {
+          //   "value": 8
+          //   // "[parameters('dataFileSize')]"
+          // },
+          // "dataGrowth": {
+          //   "value": 64
+          //   // "[parameters('dataGrowth')]"
+          // },
+          // "logFileSize": {
+          //   "value": 8
+          //   // "[parameters('logFileSize')]"
+          // },
+          // "logGrowth": {
+          //   "value": 64
+          //   // "[parameters('logGrowth')]"
+          // },
+          // "SQLSystemDbOnDataDisk": {
+          //   "value": false
+          //   // "[parameters('SQLSystemDbOnDataDisk')]"
+          // }
         }
       }
     },
@@ -1160,8 +1167,7 @@
               "type": "string",
               "metadata": {
                 "description": "Location name of the virtual machine"
-              },
-              "defaultValue": "[resourceGroup().location]"
+              }
             },
             "domainJoinUserName": {
               "type": "string",
@@ -1199,7 +1205,7 @@
               "apiVersion": "2015-06-15",
               "type": "Microsoft.Compute/virtualMachines/extensions",
               "name": "[concat(trim(variables('vmListArray')[copyIndex()]),'/joindomain')]",
-              "location": "[resourceGroup().location]",
+              "location": "[parameters('location')]",
               "copy": {
                 "name": "vmDomainJoinCopy",
                 "count": "[length(variables('vmListArray'))]"
@@ -1225,7 +1231,7 @@
         },
         "parameters": {
           "location": {
-            "value": "[resourceGroup().location]"
+            "value": "[parameters('location')]"
           },
           "vmList": {
             "value": "[variables('vmList')]"
@@ -1334,7 +1340,8 @@
               "metadata": {
                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
               },
-              "defaultValue": "[concat('clwitness', uniqueString(resourceGroup().id))]"
+              // clwitness
+              "defaultValue": "[concat('autowitness', uniqueString(resourceGroup().id))]"
             },
             "_artifactsLocation": {
               "type": "string",
@@ -1354,8 +1361,7 @@
               "type": "string",
               "metadata": {
                 "description": "Location for all resources."
-              },
-              "defaultValue": "[resourceGroup().location]"
+              }
             }
           },
           "variables": {
@@ -1480,7 +1486,7 @@
                     "value": "[variables('existingVMListArray')]"
                   },
                   "location": {
-                    "value": "[resourceGroup().location]"
+                    "value": "[parameters('location')]"
                   },
                   "sqlServerLicenseType": {
                     "value": "[parameters('sqlServerLicenseType')]"
@@ -1504,6 +1510,9 @@
 
         },
         "parameters": {
+          "location" : {
+            "value" : "[parameters('location')]"
+          },
           "failoverClusterName": {
             "value": "[parameters('failoverClusterName')]"
           },
@@ -1611,7 +1620,7 @@
             "value": "[parameters('loadBalancerName')]"
           },
           "location": {
-            "value": "[resourceGroup().location]"
+            "value": "[parameters('location')]"
           },
           "sku": {
             "value": "[parameters('loadBalancerSku')]"
@@ -1719,8 +1728,7 @@
               "type": "string",
               "metadata": {
                 "description": "Location for all resources."
-              },
-              "defaultValue": "[resourceGroup().location]"
+              }
             },
             "sqlAvailabilityGroup" : {
                "type" : "string"
@@ -1807,6 +1815,9 @@
           },
           "sqlAvailabilityGroup" : {
             "value" : "[parameters('sqlAvailabilityGroup')]"
+          },
+          "location" : {
+            "value" : "[parameters('location')]"
           }
         }
       }
