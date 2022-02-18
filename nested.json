@@ -311,6 +311,12 @@
       },
       "defaultValue": "autolistener"
     },
+    // "ListenerIpArray": {
+    //   "type": "Array",
+    //   "metadata": {
+    //     "description": "Ensure these IPs are available."
+    //   }
+    // },    
     "ListenerIp": {
       "type": "string",
       "defaultValue": "10.0.0.22"
@@ -1413,6 +1419,8 @@
                   "SqlServiceAccount": "[parameters('existingSqlServiceAccount')]",
                   "StorageAccountUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessName')), '2018-07-01').primaryEndpoints['blob']]",
                   "StorageAccountPrimaryKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessName')), '2018-07-01').keys[0].value]"
+                  // ,
+                  // "clusterSubnetType" : "multisubnet"
                 }
               }
             },
@@ -1477,6 +1485,8 @@
                           "ClusterOperatorAccountPassword": "[parameters('domainAccountPassword')]",
                           "SqlServiceAccountPassword": "[parameters('sqlServicePassword')]"
                         }
+                        ,
+                        "wsfcStaticIp": ""
                       }
                     }
                   ]
@@ -1692,6 +1702,12 @@
               },
               "defaultValue": "10.0.0.7"
             },
+            // "ListenerIpArray": {
+            //   "type": "Array",
+            //   "metadata": {
+            //     "description": "Specify the available private IP address for the listener from all the subnets."
+            //   }
+            // },
             "existingVnetResourcegroup": {
               "defaultValue": "[resourcegroup().name]",
               "type": "string",
@@ -1711,6 +1727,12 @@
                 "description": "Specify the subnet under Vnet for Listener IP address"
               }
             },
+            // "existingSubnetArray": {
+            //   "type": "Array",
+            //   "metadata": {
+            //     "description": "Provide the subnet array"
+            //   }
+            // },
             "existingInternalLoadBalancer": {
               "type": "string",
               "metadata": {
@@ -1731,7 +1753,8 @@
               }
             },
             "sqlAvailabilityGroup" : {
-               "type" : "string"
+               "type" : "string",
+               "defaultValue" : "sqlAG"
             }
           },
           "variables": {
@@ -1765,13 +1788,31 @@
                       "input": {
                         "sqlVirtualMachineInstanceId": "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
                         "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
-                        "failover": "Automatic",
-                        "commit": "Synchronous_Commit",
+                        // "failover": "Automatic",
+                        // "commit": "Synchronous_Commit",
+                        "failover": "[if(less(copyIndex('Replicas'),3), 'Automatic', 'Manual')]",    
+                        "commit": "[if(less(copyIndex('Replicas'),3), 'Synchronous_Commit', 'Asynchronous_Commit')]",             
                         "readableSecondary": "All"
                       }
                     }
                   ]
                 },
+
+               // "copy": [
+               //      {
+               //        "name": "multiSubnetIpConfigurations",
+               //        "count": "[length(variables('VmArray'))]",
+               //        "input": {
+               //          "privateIpAddress": {
+               //             "ipAddress": "[parameters('ListenerIpArray')[copyIndex('multiSubnetIpConfigurations')]]",
+               //             "subnetResourceId" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork'), '/subnets/', parameters('existingSubnetArray')[copyIndex('multiSubnetIpConfigurations')] )]",
+               //             // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.network/virtualNetworks/test-vnet/subnets/default",
+               //             "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
+               //             // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.SqlVirtualMachine/sqlVirtualMachines/testvm"
+               //          }
+               //        }
+               //      }
+               // ],
                 "LoadBalancerConfigurations": [
                   {
                     "privateIPAddress": {
@@ -1804,12 +1845,18 @@
           "existingSubnet": {
             "value": "[parameters('subnetNameForAG')]"
           },
+          // "existingSubnetArray": {
+          //   "value" : "[variables('subnetArray')]"
+          // },
           "existingInternalLoadBalancer": {
             "value": "[parameters('loadBalancerName')]"
           },
           "ListenerIp": {
             "value": "[parameters('ListenerIp')]"
           },
+          // "ListenerIpArray" : {
+          //   "value" : "[parameters('ListenerIpArray')]"
+          // },
           "Listener": {
             "value": "[parameters('ListenerName')]"
           },
