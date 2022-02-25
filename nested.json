@@ -8,7 +8,8 @@
     },
     "location": {
       "type" : "string",
-      "defaultValue":"[resourceGroup().location]"
+      "defaultValue": "eastus2euap"
+      // "[resourceGroup().location]"
     },
     // "createSubnets" : {
     //    "type" : "bool",
@@ -32,9 +33,11 @@
     // },
     "subnetNamesArray": {
       "type": "Array",
-      "defaultValue": [],
+      // "defaultValue": [],
+            "defaultValue": ["SubnetPrefix0","SubnetPrefix1", "SubnetPrefix2"],
+
       "metadata": {
-        "description": "Make sure the array size is equal to VM count, Example: ['Subnet-1','Subnet-2'] "
+        "description": "Provide the list of Subnets for all VMs that will be created. Example, for 3 VMs, subnetNamesArray: ['Subnet-1','Subnet-2','Subnet-3']. Make sure the array size is equal to VM count."
       }
     },
     "subnetNameForAG": {
@@ -63,7 +66,7 @@
     // },
     "vmPrefix": {
       "type": "string",
-      "defaultValue": "autovmprefix",
+      "defaultValue": "autcvmprefix",
       "metadata": {
         "description": "VMs created : vmPrefix-1, vmPrefix-2"
       }
@@ -259,7 +262,7 @@
     },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "autofailcluster",
+      "defaultValue": "autcfailcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -276,9 +279,16 @@
       // check if it is one to one
       // this is old data
     },
+    "failoverClusterIpArray" : {
+      "type" : "Array",
+      "metadata": {
+        "description": "Provide array of IPs for failover cluster"
+      },
+      "defaultValue" : ["10.13.1.65","10.13.2.65","10.13.3.65"]
+    },
     "loadBalancerName": {
       "type": "string",
-      "defaultValue": "autoloadbalance"
+      "defaultValue": "autcloadbalance"
     },
     "loadBalancerSku": {
       "type": "string",
@@ -301,7 +311,7 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "autoag"
+      "defaultValue": "autcag"
     },
     "ListenerName": {
       "type": "string",
@@ -309,18 +319,20 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "autolistener"
+      "defaultValue": "autclistener"
     },
-    // "ListenerIpArray": {
-    //   "type": "Array",
-    //   "metadata": {
-    //     "description": "Ensure these IPs are available."
-    //   }
-    // },    
-    "ListenerIp": {
-      "type": "string",
-      "defaultValue": "10.0.0.22"
+    "ListenerIpArray": {
+      "type": "Array",
+      "metadata": {
+        "description": "Ensure these IPs are available."
+      },
+      "defaultValue" : ["10.13.1.66","10.13.2.66","10.13.3.66"]
     }
+    // ,    
+    // "ListenerIp": {
+    //   "type": "string",
+    //   "defaultValue": "10.0.0.22"
+    // }
   },
   "variables": {
     // "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
@@ -346,19 +358,20 @@
     // "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') ) ]" ,
     // "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
 
-    // "subnetArray" : "[ parameters('subnetNamesArray') ) ]",
+    "subnetArray" : "[ parameters('subnetNamesArray')  ]",
     "vmArray": "[ variables('vmArrayHelper') ]",
 
 
 
-    "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
+    "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]"
+    // ,
     // "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
     // "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.network/subnet-add-vnet-existing/azuredeploy.json",
-    "CreateSQLVMTemplateUri": "https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
-    "JoinDomainTemplateUri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
-    "AGPrerequisitesTemplateUri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
-    "LoadBalancerTemplateUri": "https://raw.githubusercontent.com/shiva08/ARM/main/load-balancer.json",
-    "AGListenerTemplateUri": "https://raw.githubusercontent.com/shiva08/ARM/main/ag-listener.json"
+    // "CreateSQLVMTemplateUri": "https://raw.githubusercontent.com/shiva08/ARM/main/create-sqlvm.json",
+    // "JoinDomainTemplateUri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.compute/vm-domain-join-existing/azuredeploy.json",
+    // "AGPrerequisitesTemplateUri": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.sqlvirtualmachine/sql-vm-ag-setup/azuredeploy.json",
+    // "LoadBalancerTemplateUri": "https://raw.githubusercontent.com/shiva08/ARM/main/load-balancer.json",
+    // "AGListenerTemplateUri": "https://raw.githubusercontent.com/shiva08/ARM/main/ag-listener.json"
   },
   "resources": [
     // {
@@ -803,7 +816,9 @@
             {
               "name": "[parameters('sqlVirtualMachineName')]",
               "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-              "apiVersion": "2017-03-01-preview",
+              "apiVersion": "2022-02-01-preview",
+              // "2017-03-01-preview",
+              // "2022-02-01-preview",
               "location": "[parameters('sqlVirtualMachineLocation')]",
               "properties": {
                 "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]",
@@ -909,8 +924,8 @@
             ]
           },
           "subnetName": {
-            // "value":"[variables('subnetArray')[copyIndex()]]"
-            "value": "[parameters('subnetNameForAG')]"
+            "value":"[variables('subnetArray')[copyIndex()]]"
+            // "value": "[parameters('subnetNameForAG')]"
           },
           "virtualNetworkId": {
             "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
@@ -1277,6 +1292,9 @@
                 "description": "Specify the Windows Failover Cluster Name"
               }
             },
+            "failoverClusterIpArray": {
+               "type" : "Array"
+            },
             "existingVmList": {
               "type": "string",
               "metadata": {
@@ -1347,7 +1365,7 @@
                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
               },
               // clwitness
-              "defaultValue": "[concat('autowitness', uniqueString(resourceGroup().id))]"
+              "defaultValue": "[concat('autcwitness', uniqueString(resourceGroup().id))]"
             },
             "_artifactsLocation": {
               "type": "string",
@@ -1377,7 +1395,9 @@
           "resources": [
             {
               "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-              "apiVersion": "2017-03-01-preview",
+              "apiVersion": "2022-02-01-preview",
+
+              // "2017-03-01-preview",
               "name": "[trim(variables('existingVMListArray')[copyIndex()])]",
               "location": "[parameters('location')]",
               "copy": {
@@ -1405,7 +1425,9 @@
             },
             {
               "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups",
-              "apiVersion": "2017-03-01-preview",
+              "apiVersion": "2022-02-01-preview",
+              // "2017-03-01-preview",
+              // "2022-02-01-preview",
               "name": "[parameters('failoverClusterName')]",
               "location": "[parameters('location')]",
               "properties": {
@@ -1419,8 +1441,8 @@
                   "SqlServiceAccount": "[parameters('existingSqlServiceAccount')]",
                   "StorageAccountUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessName')), '2018-07-01').primaryEndpoints['blob']]",
                   "StorageAccountPrimaryKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessName')), '2018-07-01').keys[0].value]"
-                  // ,
-                  // "clusterSubnetType" : "multisubnet"
+                  ,
+                  "clusterSubnetType" : "multisubnet"
                 }
               }
             },
@@ -1463,6 +1485,10 @@
                     "sqlServicePassword": {
                       "type": "securestring"
                     }
+                    ,
+                    "failoverClusterIpArray" : {
+                      "type" : "Array"
+                    }
                   },
                   "variables": {
                   },
@@ -1470,7 +1496,9 @@
                     {
                       "name": "[trim(parameters('existingVirtualMachineNames')[copyIndex()])]",
                       "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-                      "apiVersion": "2017-03-01-preview",
+                      "apiVersion": "2022-02-01-preview",
+                      // "2017-03-01-preview",
+                      // "2022-02-01-preview",
                       "location": "[parameters('location')]",
                       "copy": {
                         "name": "vmToClusterLoop",
@@ -1486,7 +1514,7 @@
                           "SqlServiceAccountPassword": "[parameters('sqlServicePassword')]"
                         }
                         ,
-                        "wsfcStaticIp": ""
+                        "wsfcStaticIp": "[parameters('failoverClusterIpArray')[copyIndex()]]"
                       }
                     }
                   ]
@@ -1513,6 +1541,10 @@
                   "sqlServicePassword": {
                     "value": "[parameters('sqlServicePassword')]"
                   }
+                  ,
+                  "failoverClusterIpArray": {
+                    "value": "[parameters('failoverClusterIpArray')]"
+                  }
                 }
               }
             }
@@ -1525,6 +1557,9 @@
           },
           "failoverClusterName": {
             "value": "[parameters('failoverClusterName')]"
+          },
+          "failoverClusterIpArray" : {
+            "value" : "[parameters('failoverClusterIpArray')]"
           },
           "existingVmList": {
             "value": "[variables('vmList')]"
@@ -1553,106 +1588,107 @@
         }
       }
     },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2021-04-01",
-      "name": "Load-Balancer",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments/', 'AG-Prerequisites')]"
-      ],
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "template": {
-          "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {
-            "name": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
-            },
-            "sku": {
-              "type": "string"
-            },
-            "tier": {
-              "type": "string"
-            },
-            "virtualNetwork": {
-               "type" : "string"
-            },
-            "subnetNameForAG":{
-               "type" : "string"
-            }
-          },
-          "resources": [
-            {
-              "apiVersion": "2021-02-01",
-              "name": "[parameters('name')]",
-              "type": "Microsoft.Network/loadBalancers",
-              "location": "[parameters('location')]",
-              "dependsOn": [],
-              "tags": {},
-              "properties": {
-                "frontendIPConfigurations": [
-                  {
-                    "name": "load1-frontend-ip",
-                    "properties": {
-                      "privateIPAddress": null,
-                      "privateIPAddressVersion": "IPv4",
-                      "privateIPAllocationMethod": "Dynamic",
-                      "subnet": {
-                        "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork'), '/subnets/', parameters('subnetNameForAG') )]"
+    // {
+    //   "type": "Microsoft.Resources/deployments",
+    //   "apiVersion": "2021-04-01",
+    //   "name": "Load-Balancer",
+    //   "dependsOn": [
+    //     "[resourceId('Microsoft.Resources/deployments/', 'AG-Prerequisites')]"
+    //   ],
+    //   "properties": {
+    //     "expressionEvaluationOptions": {
+    //       "scope": "inner"
+    //     },
+    //     "mode": "Incremental",
+    //     "template": {
+    //       "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    //       "contentVersion": "1.0.0.0",
+    //       "parameters": {
+    //         "name": {
+    //           "type": "string"
+    //         },
+    //         "location": {
+    //           "type": "string"
+    //         },
+    //         "sku": {
+    //           "type": "string"
+    //         },
+    //         "tier": {
+    //           "type": "string"
+    //         },
+    //         "virtualNetwork": {
+    //            "type" : "string"
+    //         },
+    //         "subnetNameForAG":{
+    //            "type" : "string"
+    //         }
+    //       },
+    //       "resources": [
+    //         {
+    //           "apiVersion": "2021-02-01",
+    //           "name": "[parameters('name')]",
+    //           "type": "Microsoft.Network/loadBalancers",
+    //           "location": "[parameters('location')]",
+    //           "dependsOn": [],
+    //           "tags": {},
+    //           "properties": {
+    //             "frontendIPConfigurations": [
+    //               {
+    //                 "name": "load1-frontend-ip",
+    //                 "properties": {
+    //                   "privateIPAddress": null,
+    //                   "privateIPAddressVersion": "IPv4",
+    //                   "privateIPAllocationMethod": "Dynamic",
+    //                   "subnet": {
+    //                     "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork'), '/subnets/', parameters('subnetNameForAG') )]"
 
-                        // "/subscriptions/0009fc4d-e310-4e40-8e63-c48a23e9cdc1/resourceGroups/SQL-HA-RG/providers/Microsoft.Network/virtualNetworks/SQLHAVNET1/subnets/DC-Subnet"
-                      }
-                    }
-                  }
-                ],
-                "backendAddressPools": [],
-                "probes": [],
-                "loadBalancingRules": [],
-                "inboundNatRules": [],
-                "outboundRules": []
-              },
-              "sku": {
-                "name": "[parameters('sku')]",
-                "tier": "[parameters('tier')]"
-              }
-            }
-          ]
-        },
-        "parameters": {
-          "name": {
-            "value": "[parameters('loadBalancerName')]"
-          },
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "sku": {
-            "value": "[parameters('loadBalancerSku')]"
-          },
-          "tier": {
-            "value": "[parameters('loadBalancerTier')]"
-          },
-          "virtualNetwork" :{
-            "value" : "[parameters('virtualNetwork')]"
-          },
-          "subnetNameForAG":{
-            "value" : "[parameters('subnetNameForAG')]"
-          }
-        }
-      }
-    },
+    //                     // "/subscriptions/0009fc4d-e310-4e40-8e63-c48a23e9cdc1/resourceGroups/SQL-HA-RG/providers/Microsoft.Network/virtualNetworks/SQLHAVNET1/subnets/DC-Subnet"
+    //                   }
+    //                 }
+    //               }
+    //             ],
+    //             "backendAddressPools": [],
+    //             "probes": [],
+    //             "loadBalancingRules": [],
+    //             "inboundNatRules": [],
+    //             "outboundRules": []
+    //           },
+    //           "sku": {
+    //             "name": "[parameters('sku')]",
+    //             "tier": "[parameters('tier')]"
+    //           }
+    //         }
+    //       ]
+    //     },
+    //     "parameters": {
+    //       "name": {
+    //         "value": "[parameters('loadBalancerName')]"
+    //       },
+    //       "location": {
+    //         "value": "[parameters('location')]"
+    //       },
+    //       "sku": {
+    //         "value": "[parameters('loadBalancerSku')]"
+    //       },
+    //       "tier": {
+    //         "value": "[parameters('loadBalancerTier')]"
+    //       },
+    //       "virtualNetwork" :{
+    //         "value" : "[parameters('virtualNetwork')]"
+    //       },
+    //       "subnetNameForAG":{
+    //         "value" : "[parameters('subnetNameForAG')]"
+    //       }
+    //     }
+    //   }
+    // },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
       "name": "AG-Listener",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments/', 'Load-Balancer')]"
+        "[resourceId('Microsoft.Resources/deployments/', 'AG-Prerequisites')]"
+        // 'Load-Balancer')]"
       ],
       "properties": {
         "expressionEvaluationOptions": {
@@ -1695,19 +1731,19 @@
               },
               "defaultValue": 1433
             },
-            "ListenerIp": {
-              "type": "string",
-              "metadata": {
-                "description": "Specify the available private IP address for the listener from the subnet the existing Vms are part of."
-              },
-              "defaultValue": "10.0.0.7"
-            },
-            // "ListenerIpArray": {
-            //   "type": "Array",
+            // "ListenerIp": {
+            //   "type": "string",
             //   "metadata": {
-            //     "description": "Specify the available private IP address for the listener from all the subnets."
-            //   }
+            //     "description": "Specify the available private IP address for the listener from the subnet the existing Vms are part of."
+            //   },
+            //   "defaultValue": "10.0.0.7"
             // },
+            "ListenerIpArray": {
+              "type": "Array",
+              "metadata": {
+                "description": "Specify the available private IP address for the listener from all the subnets."
+              }
+            },
             "existingVnetResourcegroup": {
               "defaultValue": "[resourcegroup().name]",
               "type": "string",
@@ -1727,12 +1763,12 @@
                 "description": "Specify the subnet under Vnet for Listener IP address"
               }
             },
-            // "existingSubnetArray": {
-            //   "type": "Array",
-            //   "metadata": {
-            //     "description": "Provide the subnet array"
-            //   }
-            // },
+            "existingSubnetArray": {
+              "type": "Array",
+              "metadata": {
+                "description": "Provide the subnet array"
+              }
+            },
             "existingInternalLoadBalancer": {
               "type": "string",
               "metadata": {
@@ -1776,7 +1812,9 @@
             {
               "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups/availabilityGroupListeners",
               "name": "[concat(parameters('existingFailoverClusterName'), '/', parameters('Listener'))]",
-              "apiVersion": "2017-03-01-preview",
+              "apiVersion": "2022-02-01-preview",
+              // "2017-03-01-preview",
+              // "2022-02-01-preview",
               "location": "[parameters('Location')]",
               "properties": {
                 "AvailabilityGroupName": "[parameters('sqlAvailabilityGroup')]",
@@ -1798,32 +1836,32 @@
                   ]
                 },
 
-               // "copy": [
-               //      {
-               //        "name": "multiSubnetIpConfigurations",
-               //        "count": "[length(variables('VmArray'))]",
-               //        "input": {
-               //          "privateIpAddress": {
-               //             "ipAddress": "[parameters('ListenerIpArray')[copyIndex('multiSubnetIpConfigurations')]]",
-               //             "subnetResourceId" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork'), '/subnets/', parameters('existingSubnetArray')[copyIndex('multiSubnetIpConfigurations')] )]",
-               //             // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.network/virtualNetworks/test-vnet/subnets/default",
-               //             "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
-               //             // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.SqlVirtualMachine/sqlVirtualMachines/testvm"
-               //          }
-               //        }
-               //      }
-               // ],
-                "LoadBalancerConfigurations": [
-                  {
-                    "privateIPAddress": {
-                      "IpAddress": "[parameters('ListenerIp')]",
-                      "SubnetResourceId": "[variables('SubnetResourceId')]"
-                    },
-                    "LoadBalancerResourceId": "[variables('LoadBalancerResourceId')]",
-                    "ProbePort": "[parameters('ProbePort')]",
-                    "SqlVirtualMachineInstances": "[variables('SqlVmResourceIdList')]"
-                  }
-                ],
+               "copy": [
+                    {
+                      "name": "multiSubnetIpConfigurations",
+                      "count": "[length(variables('VmArray'))]",
+                      "input": {
+                        "privateIpAddress": {
+                           "ipAddress": "[parameters('ListenerIpArray')[copyIndex('multiSubnetIpConfigurations')]]",
+                           "subnetResourceId" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVnet'), '/subnets/', parameters('existingSubnetArray')[copyIndex('multiSubnetIpConfigurations')] )]",
+                           // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.network/virtualNetworks/test-vnet/subnets/default",
+                           "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
+                           // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.SqlVirtualMachine/sqlVirtualMachines/testvm"
+                        }
+                      }
+                    }
+               ],
+                // "LoadBalancerConfigurations": [
+                //   {
+                //     "privateIPAddress": {
+                //       "IpAddress": "[parameters('ListenerIp')]",
+                //       "SubnetResourceId": "[variables('SubnetResourceId')]"
+                //     },
+                //     "LoadBalancerResourceId": "[variables('LoadBalancerResourceId')]",
+                //     "ProbePort": "[parameters('ProbePort')]",
+                //     "SqlVirtualMachineInstances": "[variables('SqlVmResourceIdList')]"
+                //   }
+                // ],
                 "Port": "[parameters('ListenerPort')]"
               }
             }
@@ -1845,18 +1883,18 @@
           "existingSubnet": {
             "value": "[parameters('subnetNameForAG')]"
           },
-          // "existingSubnetArray": {
-          //   "value" : "[variables('subnetArray')]"
-          // },
+          "existingSubnetArray": {
+            "value" : "[variables('subnetArray')]"
+          },
           "existingInternalLoadBalancer": {
             "value": "[parameters('loadBalancerName')]"
           },
-          "ListenerIp": {
-            "value": "[parameters('ListenerIp')]"
-          },
-          // "ListenerIpArray" : {
-          //   "value" : "[parameters('ListenerIpArray')]"
+          // "ListenerIp": {
+          //   "value": "[parameters('ListenerIp')]"
           // },
+          "ListenerIpArray" : {
+            "value" : "[parameters('ListenerIpArray')]"
+          },
           "Listener": {
             "value": "[parameters('ListenerName')]"
           },
