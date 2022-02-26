@@ -66,7 +66,7 @@
     // },
     "vmPrefix": {
       "type": "string",
-      "defaultValue": "autcvmprefix",
+      "defaultValue": "autevmprefix",
       "metadata": {
         "description": "VMs created : vmPrefix-1, vmPrefix-2"
       }
@@ -262,7 +262,7 @@
     },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "autcfailcluster",
+      "defaultValue": "autefailcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -284,11 +284,11 @@
       "metadata": {
         "description": "Provide array of IPs for failover cluster"
       },
-      "defaultValue" : ["10.13.1.65","10.13.2.65","10.13.3.65"]
+      "defaultValue" : ["10.13.1.69","10.13.2.69","10.13.3.69"]
     },
     "loadBalancerName": {
       "type": "string",
-      "defaultValue": "autcloadbalance"
+      "defaultValue": "auteloadbalance"
     },
     "loadBalancerSku": {
       "type": "string",
@@ -311,7 +311,7 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "autcag"
+      "defaultValue": "auteag"
     },
     "ListenerName": {
       "type": "string",
@@ -319,14 +319,14 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "autclistener"
+      "defaultValue": "autelistener"
     },
     "ListenerIpArray": {
       "type": "Array",
       "metadata": {
         "description": "Ensure these IPs are available."
       },
-      "defaultValue" : ["10.13.1.66","10.13.2.66","10.13.3.66"]
+      "defaultValue" : ["10.13.1.70","10.13.2.70","10.13.3.70"]
     }
     // ,    
     // "ListenerIp": {
@@ -1365,7 +1365,7 @@
                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
               },
               // clwitness
-              "defaultValue": "[concat('autcwitness', uniqueString(resourceGroup().id))]"
+              "defaultValue": "[concat('autewitness', uniqueString(resourceGroup().id))]"
             },
             "_artifactsLocation": {
               "type": "string",
@@ -1794,8 +1794,8 @@
             }
           },
           "variables": {
-            "LoadBalancerResourceId": "[resourceId('Microsoft.Network/loadBalancers', parameters('existingInternalLoadBalancer'))]",
-            "SubnetResourceId": "[concat(resourceid(parameters('existingVnetResourcegroup'),'Microsoft.Network/virtualNetworks', parameters('existingVnet')), '/subnets/', parameters('existingSubnet'))]",
+            // "LoadBalancerResourceId": "[resourceId('Microsoft.Network/loadBalancers', parameters('existingInternalLoadBalancer'))]",
+            // "SubnetResourceId": "[concat(resourceid(parameters('existingVnetResourcegroup'),'Microsoft.Network/virtualNetworks', parameters('existingVnet')), '/subnets/', parameters('existingSubnet'))]",
             "VmArray": "[split(parameters('existingVmList'),',')]",
             "VM0": "[if(less(0, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[0]))), json('[]'))]",
             "VM1": "[if(less(1, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[1]))), json('[]'))]",
@@ -1843,11 +1843,11 @@
                       "input": {
                         "privateIpAddress": {
                            "ipAddress": "[parameters('ListenerIpArray')[copyIndex('multiSubnetIpConfigurations')]]",
-                           "subnetResourceId" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVnet'), '/subnets/', parameters('existingSubnetArray')[copyIndex('multiSubnetIpConfigurations')] )]",
+                           "subnetResourceId" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVnet'), '/subnets/', parameters('existingSubnetArray')[copyIndex('multiSubnetIpConfigurations')] )]"
                            // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.network/virtualNetworks/test-vnet/subnets/default",
-                           "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
+                        },
+                        "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
                            // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.SqlVirtualMachine/sqlVirtualMachines/testvm"
-                        }
                       }
                     }
                ],
