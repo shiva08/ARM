@@ -32,7 +32,7 @@
         },
         "vmPrefix": {
             "type": "string",
-            "defaultValue": "autfvmprefix",
+            "defaultValue": "authvmprefix",
             "metadata": {
                 "description": "VMs created : vmPrefix-1, vmPrefix-2"
             }
@@ -116,7 +116,7 @@
         },
         "failoverClusterName": {
             "type": "string",
-            "defaultValue": "autffailcluster",
+            "defaultValue": "authfailcluster",
             "maxLength": 15,
             "metadata": {
                 "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -140,9 +140,9 @@
                 "description": "Provide array of IPs for failover cluster"
             },
             "defaultValue": [
-                "10.13.1.71",
-                "10.13.2.71",
-                "10.13.3.71"
+                "10.13.1.73",
+                "10.13.2.73",
+                "10.13.3.73"
             ]
         },
         "sqlAvailabilityGroup": {
@@ -150,7 +150,7 @@
             "metadata": {
                 "description": "Ensure there is no AG with same name registered with domain controller."
             },
-            "defaultValue": "autfag"
+            "defaultValue": "authag"
         },
         "ListenerName": {
             "type": "string",
@@ -158,7 +158,7 @@
             "metadata": {
                 "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
             },
-            "defaultValue": "autflistener"
+            "defaultValue": "authlistener"
         },
         "ListenerIpArray": {
             "type": "Array",
@@ -166,9 +166,9 @@
                 "description": "Ensure these IPs are available."
             },
             "defaultValue": [
-                "10.13.1.72",
-                "10.13.2.72",
-                "10.13.3.72"
+                "10.13.1.74",
+                "10.13.2.74",
+                "10.13.3.74"
             ]
         }
     },
@@ -793,7 +793,7 @@
                             "metadata": {
                                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
                             },
-                            "defaultValue": "[concat('autfwitness', uniqueString(resourceGroup().id))]"
+                            "defaultValue": "[concat('authwitness', uniqueString(resourceGroup().id))]"
                         },
                         "_artifactsLocation": {
                             "type": "string",
