@@ -4,7 +4,7 @@
     "parameters": {
         "virtualNetwork": {
             "type": "string",
-            "defaultValue": "SQLHAVNET"
+            "defaultValue": "SQLHAVNET1"
         },
         "location": {
             "type": "string",
