@@ -13,9 +13,9 @@
         "subnetNamesArray": {
             "type": "Array",
             "defaultValue": [
-                "SubnetPrefix0",
-                "SubnetPrefix1",
-                "SubnetPrefix2"
+                "Subnet1",
+                "Subnet2",
+                "Subnet3"
             ],
             "metadata": {
                 "description": "Provide the list of Subnets for all VMs that will be created. Example, for 3 VMs, subnetNamesArray: ['Subnet-1','Subnet-2','Subnet-3']. Make sure the array size is equal to VM count."
