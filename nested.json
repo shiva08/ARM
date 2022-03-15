@@ -10,17 +10,6 @@
             "type": "string",
             "defaultValue": "eastus2euap"
         },
-        "subnetNamesArray": {
-            "type": "Array",
-            "defaultValue": [
-                "Subnet1",
-                "Subnet2",
-                "Subnet3"
-            ],
-            "metadata": {
-                "description": "Provide the list of Subnets for all VMs that will be created. Example, for 3 VMs, subnetNamesArray: ['Subnet-1','Subnet-2','Subnet-3']. Make sure the array size is equal to VM count."
-            }
-        },
         "vmCount": {
             "type": "int",
             "defaultValue": 3,
@@ -32,9 +21,20 @@
         },
         "vmPrefix": {
             "type": "string",
-            "defaultValue": "t1vmprefix",
+            "defaultValue": "t0vmprefix",
             "metadata": {
                 "description": "VMs created : vmPrefix-1, vmPrefix-2"
+            }
+        },
+        "subnetNamesArray": {
+            "type": "Array",
+            "defaultValue": [
+                "Subnet1",
+                "Subnet2",
+                "Subnet3"
+            ],
+            "metadata": {
+                "description": "Provide the list of Subnets for all VMs. Example, for 3 VMs, subnetNamesArray: ['Subnet-1','Subnet-2','Subnet-3']. Make sure the array size is equal to VM count. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
             }
         },
         "sqlServerImagePublisher": {
@@ -88,7 +88,7 @@
                 "AHUB"
             ],
             "metadata": {
-                "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits."
+                "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits. You should use 'AHUB' if BYOL SQL image was used."
             }
         },
         "adminUsername": {
@@ -116,22 +116,10 @@
         },
         "failoverClusterName": {
             "type": "string",
-            "defaultValue": "t1failcluster",
+            "defaultValue": "t0failcluster",
             "maxLength": 15,
             "metadata": {
                 "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
-            }
-        },
-        "failoverSQLServerImageType": {
-            "type": "string",
-            "defaultValue": "SQL2016-WS2016",
-            "allowedValues": [
-                "SQL2017-WS2016",
-                "SQL2016-WS2016",
-                "SQL2019-WS2019"
-            ],
-            "metadata": {
-                "description": "Select the version of SQL Server Image type"
             }
         },
         "failoverClusterIpArray": {
@@ -140,9 +128,9 @@
                 "description": "Provide array of IPs for failover cluster"
             },
             "defaultValue": [
-                "10.13.1.73",
-                "10.13.2.73",
-                "10.13.3.73"
+                "10.3.2.10",
+                "10.13.3.10",
+                "10.3.4.10"
             ]
         },
         "sqlAvailabilityGroup": {
@@ -150,7 +138,7 @@
             "metadata": {
                 "description": "Ensure there is no AG with same name registered with domain controller."
             },
-            "defaultValue": "t1ag"
+            "defaultValue": "t0ag"
         },
         "ListenerName": {
             "type": "string",
@@ -158,7 +146,7 @@
             "metadata": {
                 "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
             },
-            "defaultValue": "t1listener"
+            "defaultValue": "t0listener"
         },
         "ListenerIpArray": {
             "type": "Array",
@@ -166,9 +154,9 @@
                 "description": "Ensure these IPs are available."
             },
             "defaultValue": [
-                "10.13.1.74",
-                "10.13.2.74",
-                "10.13.3.74"
+                "10.3.2.11",
+                "10.13.3.11",
+                "10.3.4.11"
             ]
         }
     },
@@ -793,7 +781,7 @@
                             "metadata": {
                                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
                             },
-                            "defaultValue": "[concat('t1witness', uniqueString(resourceGroup().id))]"
+                            "defaultValue": "[concat('t0witness', uniqueString(resourceGroup().id))]"
                         },
                         "_artifactsLocation": {
                             "type": "string",
@@ -818,7 +806,9 @@
                     },
                     "variables": {
                         "existingVMListArray": "[split(parameters('existingVmList'),',')]",
-                        "GroupResourceId": "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups', parameters('failoverClusterName'))]"
+                        "GroupResourceId": "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups', parameters('failoverClusterName'))]",
+                        "sqlImageArray": "[split(parameters('sqlServerImageType'),'-')]",
+                        "failoverSQLServerImageType": "[concat(substring(variables('sqlImageArray')[0],0,7),'-',substring(variables('sqlImageArray')[1],0,7))]"
                     },
                     "resources": [
                         {
@@ -984,7 +974,7 @@
                         "value": "[parameters('sqlServerLicenseType')]"
                     },
                     "sqlServerImageType": {
-                        "value": "[parameters('failoverSQLServerImageType')]"
+                        "value": "[variables('failoverSQLServerImageType')]"
                     },
                     "existingFullyQualifiedDomainName": {
                         "value": "[parameters('domainFQDN')]"
