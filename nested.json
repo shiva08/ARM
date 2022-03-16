@@ -4,7 +4,7 @@
     "parameters": {
         "virtualNetwork": {
             "type": "string",
-            "defaultValue": "SQLHAVNET1"
+            "defaultValue": "SQLHAVNET"
         },
         "location": {
             "type": "string",
@@ -21,7 +21,7 @@
         },
         "vmPrefix": {
             "type": "string",
-            "defaultValue": "t0vmprefix",
+            "defaultValue": "t5vmprefix",
             "metadata": {
                 "description": "VMs created : vmPrefix-1, vmPrefix-2"
             }
@@ -116,7 +116,7 @@
         },
         "failoverClusterName": {
             "type": "string",
-            "defaultValue": "t0failcluster",
+            "defaultValue": "t5failcluster",
             "maxLength": 15,
             "metadata": {
                 "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -128,9 +128,9 @@
                 "description": "Provide array of IPs for failover cluster"
             },
             "defaultValue": [
-                "10.3.2.10",
-                "10.13.3.10",
-                "10.3.4.10"
+                "10.6.2.15",
+                "10.6.3.15",
+                "10.6.4.15"
             ]
         },
         "sqlAvailabilityGroup": {
@@ -138,7 +138,7 @@
             "metadata": {
                 "description": "Ensure there is no AG with same name registered with domain controller."
             },
-            "defaultValue": "t0ag"
+            "defaultValue": "t5ag"
         },
         "ListenerName": {
             "type": "string",
@@ -146,7 +146,7 @@
             "metadata": {
                 "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
             },
-            "defaultValue": "t0listener"
+            "defaultValue": "t5listener"
         },
         "ListenerIpArray": {
             "type": "Array",
@@ -154,9 +154,9 @@
                 "description": "Ensure these IPs are available."
             },
             "defaultValue": [
-                "10.3.2.11",
-                "10.13.3.11",
-                "10.3.4.11"
+                "10.6.2.16",
+                "10.6.3.16",
+                "10.6.4.16"
             ]
         }
     },
@@ -170,7 +170,9 @@
         ],
         "subnetArray": "[ parameters('subnetNamesArray')  ]",
         "vmArray": "[ variables('vmArrayHelper') ]",
-        "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]"
+        "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
+        "sqlImageArray": "[split(parameters('sqlServerImageType'),'-')]",
+        "failoverSQLServerImageType": "[concat(substring(variables('sqlImageArray')[0],0,7),'-',substring(variables('sqlImageArray')[1],0,6))]"
     },
     "resources": [
         {
@@ -682,7 +684,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2021-04-01",
-            "name": "AG-Prerequisites",
+            "name": "Failover-Cluster",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments/', 'Join-the-domain')]"
             ],
@@ -781,7 +783,7 @@
                             "metadata": {
                                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
                             },
-                            "defaultValue": "[concat('t0witness', uniqueString(resourceGroup().id))]"
+                            "defaultValue": "[concat('t5witness', uniqueString(resourceGroup().id))]"
                         },
                         "_artifactsLocation": {
                             "type": "string",
@@ -806,9 +808,7 @@
                     },
                     "variables": {
                         "existingVMListArray": "[split(parameters('existingVmList'),',')]",
-                        "GroupResourceId": "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups', parameters('failoverClusterName'))]",
-                        "sqlImageArray": "[split(parameters('sqlServerImageType'),'-')]",
-                        "failoverSQLServerImageType": "[concat(substring(variables('sqlImageArray')[0],0,7),'-',substring(variables('sqlImageArray')[1],0,7))]"
+                        "GroupResourceId": "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups', parameters('failoverClusterName'))]"
                     },
                     "resources": [
                         {
@@ -999,7 +999,7 @@
             "apiVersion": "2021-04-01",
             "name": "AG-Listener",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments/', 'AG-Prerequisites')]"
+                "[resourceId('Microsoft.Resources/deployments/', 'Failover-Cluster')]"
             ],
             "properties": {
                 "expressionEvaluationOptions": {
