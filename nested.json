@@ -29,22 +29,22 @@
     // },
     // "networkSecurityGroupName":{
     //    "type":"string",
-    //    "defaultValue":"NRMS-z6zkw5h6ct7geSQLHAVNET1"
+    //    "defaultValue":"NRMS-z6zkw5h6ct21geSQLHAVNET1"
     // },
     // "subnetNameForAG": {
     //   "type": "string",
     //   "defaultValue": "DC-subnet"
     //   //Is it needed for multisubnet
     // },
-    "vmCount": {
-      "type": "int",
-      "defaultValue": 3,
-      "minValue": 2,
-      "maxValue": 9,
-      "metadata": {
-        "description": "Maximum number of VMs currently supported for AG is 9"
-      }
-    },
+    // "vmCount": {
+    //   "type": "int",
+    //   "defaultValue": 3,
+    //   "minValue": 2,
+    //   "maxValue": 9,
+    //   "metadata": {
+    //     "description": "Maximum number of VMs currently supported for AG is 9. Minimum is 2."
+    //   }
+    // },
     // "createVM":{
     //    "type" : "bool",
     //    "defaultValue" : "[false()]"
@@ -55,26 +55,29 @@
     //    "type" : "bool",
     //    "defaultValue" : "[false()]"
     // },
-    "vmPrefix": {
-      "type": "string",
-      "defaultValue": "t5vmprefix",
-      "metadata": {
-        "description": "VMs created : vmPrefix-1, vmPrefix-2"
-      }
+    // "vmPrefix": {
+    //   "type": "string",
+    //   "defaultValue": "t21vmprefix",
+    //   "metadata": {
+    //     "description": "VMs created : vmPrefix-1, vmPrefix-2"
+    //   }
+    // },
+    "VMNamesForPrimaryAndSecondaryReplicas":{
+       "type" : "Array",
+       "defaultValue" : ["t211","t212","t213"],
+       "metadata": {
+        "description": "Maximum number of replicas including primary = 9 , Example syntax: ['vm1','vm2','vm3']"
+       }
     },
-    "subnetNamesArray": {
+    "subnetNames": {
       "type": "Array",
       // "defaultValue": [],
             "defaultValue": ["Subnet1", "Subnet2", "Subnet3"],
 
       "metadata": {
-        "description": "Provide the list of Subnets for all VMs. Example, for 3 VMs, subnetNamesArray: ['Subnet-1','Subnet-2','Subnet-3']. Make sure the array size is equal to VM count. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
+        "description": "Subnet names have to be distinct to one another and must be equal to number of Replicas. Syntax example: ['Subnet-1','Subnet-2','Subnet-3']. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
       }
     },
-    // "vmNamesArray":{
-    //    "type" : "Array",
-    //    "defaultValue" : []
-    // },
     // "sqlServerImagePublisher": {
     //   "type": "string",
     //   "defaultValue": "MicrosoftSQLServer"
@@ -82,17 +85,16 @@
     //   //non -editable is n't possible
     //   // custom images aren't working
     // },
-    "sqlServerImageType": {
+    "SQLServerImageType": {
       "type": "string",
       "defaultValue": "SQL2016SP2-WS2016",
       "allowedValues": ["SQL2008R2SP3-WS2008R2SP1", "SQL2008R2SP3-WS2008R2SP1-BYOL", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2-BYOL", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP3-WS2012R2", "SQL2014SP3-WS2012R2-BYOL", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016-BYOL", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2019", "SQL2016SP2-WS2019-BYOL", "SQL2016SP3-WS2019", "SQL2017-WS2016", "SQL2017-WS2016-BYOL", "SQL2017-WS2019", "SQL2017-WS2019-BYOL", "SQL2019-WS2019", "SQL2019-WS2019-BYOL", "SQL2019-WS2022"]
     },
-    "sqlServerSku": {
+    "SQLServerSku": {
       "type": "string",
       "defaultValue": "Enterprise",
       "allowedValues": [
         "Enterprise",
-        "Standard",
         "Developer"
       ],
       "metadata": {
@@ -101,7 +103,7 @@
       // standard? (it supports only 2 vms) 
       //provide docs
     },
-    "sqlServerLicenseType": {
+    "SQLServerLicenseType": {
       "type": "string",
       "defaultValue": "PAYG",
       "allowedValues": [ "PAYG", "AHUB" ],
@@ -109,14 +111,22 @@
         "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits. You should use 'AHUB' if BYOL SQL image was used."
       }
     },
-    // "existingSqlServiceAccount":{
-    //    "type":"string",
-    //    "defaultValue":"DomainAdmin@corp.contoso.com"
-    // },
-    // "sqlServicePassword":{
-    //    "type":"securestring",
-    //    "defaultValue":"Contoso!0000"
-    // },
+    "LocalAdminUserName": {
+      "type": "string",
+      "defaultValue": "LocalAdmin"
+    },
+    "LocalAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "Contoso!0000"
+    },
+    "SQLServiceAccountUserName":{
+       "type":"string",
+       "defaultValue":"sqlserviceaccount"
+    },
+    "SQLServiceAccountPassword":{
+       "type":"securestring",
+       "defaultValue":"Contoso!0000"
+    },
     // "sqlConnectivityType":{
     //    "type" : "string",
     //    "defaultValue" : "Private",
@@ -133,16 +143,24 @@
     //    "defaultValue" : ""
     // },
     // "SQLAuthUpdatePassword": {
-    //    "type" : "secureString",
+    //    "type" : "securestring",
     //    "defaultValue" : ""
     // },
-    "adminUsername": {
-      "type": "string",
-      "defaultValue": "DomainAdmin"
+    "DomainUserName" : {
+      "type" : "string",
+      "defaultValue" : "DomainAdmin",
+      // "bootstrap" 
+      "metadata": {
+        "description": "This account is used to create FCI name in Acitve directory and join VM's to Domain"
+      }    
     },
-    "adminPassword": {
-      "type": "secureString",
-      "defaultValue": "Contoso!0000"
+    "DomainUserPassword" : {
+      "type" : "securestring",
+      "defaultValue" : "Contoso!0000"
+    },
+    "domainFQDN": {
+      "type": "string",
+      "defaultValue": "corp.contoso.com"
     },
     // "createPublicIpAddress":{
     //    "type": "bool",
@@ -165,11 +183,11 @@
     //      "Standard"
     //    ]
     // },
-    "virtualMachineSize": {
+    "SizeForVirtualMachines": {
       "type": "string",
       "defaultValue": "Standard_D2s_v3",
       "metadata": {
-        "description": "Size of the virtual machine. Refer https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile"
+        "description": "Please select a size from the list mentioned here: https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile. Note that the same size will be applied to all the replicas."
       }
     },
     // "KeyVaultCredentialEnabled": {
@@ -252,17 +270,9 @@
     //    "type": "bool",
     //    "defaultValue" : false
     // },
-    "domainJoinUserName": {
-      "type": "string",
-      "defaultValue": "CORP"
-    },
-    "domainFQDN": {
-      "type": "string",
-      "defaultValue": "corp.contoso.com"
-    },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "t5failcluster",
+      "defaultValue": "t21failcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -271,13 +281,29 @@
     "failoverClusterIpArray" : {
       "type" : "Array",
       "metadata": {
-        "description": "Provide array of IPs for failover cluster"
+        "description": "Provide array of IPs for failover cluster. Example syntax: ['10.6.2.29','10.6.3.29','10.6.4.29']"
       },
-      "defaultValue" : ["10.6.2.15","10.6.3.15","10.6.4.15"]
+      "defaultValue" : ["10.6.2.47","10.6.3.47","10.6.4.47"]
+    },
+    "createNewStorageAccount":{
+      "type" : "bool",
+      "defaultValue" : "true",
+      "metadata": {
+        "description": "Creates new storage account for Witness."
+      }
+    },
+    "storageAccountName":{
+      "type" : "string",
+      "defaultValue" : "storagekyunn",
+      "minLength": 3,
+      "maxLength": 24,
+      "metadata": {
+        "description": "Enter existing storage account if you have chosen false in the above option. Storage account name must be between 3 and 24 characters in length and use numbers and lower-case letters only."
+      }
     },
     // "loadBalancerName": {
     //   "type": "string",
-    //   "defaultValue": "t5loadbalance"
+    //   "defaultValue": "t21loadbalance"
     // },
     // "loadBalancerSku": {
     //   "type": "string",
@@ -295,12 +321,12 @@
     //     "Global"
     //   ]
     // },
-    "sqlAvailabilityGroup": {
+    "SQLAvailabilityGroup": {
       "type": "string",
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "t5ag"
+      "defaultValue": "t21ag"
     },
     "ListenerName": {
       "type": "string",
@@ -308,14 +334,14 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "t5listener"
+      "defaultValue": "t21listener"
     },
     "ListenerIpArray": {
       "type": "Array",
       "metadata": {
-        "description": "Ensure these IPs are available."
+        "description": "Ensure these IPs are available. Example syntax: ['10.6.2.30','10.6.3.30','10.6.4.30'] "
       },
-      "defaultValue" : ["10.6.2.16","10.6.3.16","10.6.4.16"]
+      "defaultValue" : ["10.6.2.48","10.6.3.48","10.6.4.48"]
     }
     // ,    
     // "ListenerIp": {
@@ -324,15 +350,18 @@
     // }
   },
   "variables": {
+    // Get 'corp' from 'corp.contoso.com' 
+   "shortDomain" : "[toUpper(split(parameters('domainFQDN'), '.')[0])]",
+    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('failoverClusterIpArray')) ), equals(parameters('vmCount'), length(parameters('ListenerIpArray')) )  )]",
+    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('failoverClusterIpArray')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('ListenerIpArray')) )  )]",
 
-    "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNamesArray'))) , equals(parameters('vmCount'), length(parameters('failoverClusterIpArray')) ), equals(parameters('vmCount'), length(parameters('ListenerIpArray')) )  )]",
     // "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
-    "copy": [
-      {
-        "name": "vmArrayHelper",
-        "count": "[parameters('vmCount')]",
-        "input": "[concat(parameters('vmPrefix'), '-', copyIndex('vmArrayHelper', 1))]"
-      }
+    // "copy": [
+    //   {
+    //     "name": "vmArrayHelper",
+    //     "count": "[parameters('vmCount')]",
+    //     "input": "[concat(parameters('vmPrefix'), '-', copyIndex('vmArrayHelper', 1))]"
+    //   }
       // ,
       // {
       //    "name":"subnetArrayHelper",
@@ -344,17 +373,22 @@
       //    "count":"[parameters('vmCount')]",
       //    "input":"[format('{0}.{1}.{2}.{3}/{4}', variables('AddressRangeArray')[0], variables('AddressRangeArray')[1], copyIndex('subnetIPAddressArray', 5), variables('AddressRangeArray')[3], string(parameters('subnetClassBits')) ) ]"
       // }
-    ],
+    // ],
 
-    // "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNamesArray') ) ]" ,
-    // "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('vmNamesArray')) ]",
+    // "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNames') ) ]" ,
+    // "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('VMNamesForPrimaryAndSecondaryReplicas')) ]",
 
-    "subnetArray" : "[ parameters('subnetNamesArray')  ]",
-    "vmArray": "[ variables('vmArrayHelper') ]",
+    "subnetArray" : "[ parameters('subnetNames')  ]",
+    // "vmArray": "[ variables('vmArrayHelper') ]",
 
+    "vmArray" : "[ parameters('VMNamesForPrimaryAndSecondaryReplicas')]",
+
+    // Convert VM array to a String with VMs separated by comma using string replace
     "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
 
-    "sqlImageArray": "[split(parameters('sqlServerImageType'),'-')]",
+    "sqlImageArray": "[split(parameters('SQLServerImageType'),'-')]",
+
+    //Construct SQL2008-WS2008 from SQL2008R2SP3-WS2008R2SP1-BYOL
     "failoverSQLServerImageType" : "[concat(substring(variables('sqlImageArray')[0],0,7),'-',substring(variables('sqlImageArray')[1],0,6))]"
     // ,
     // "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
@@ -458,7 +492,8 @@
       // ],
       "copy": {
         "name": "Create-SQLVM",
-        "count": "[parameters('vmCount')]",
+        "count": "[length(parameters('VMNamesForPrimaryAndSecondaryReplicas'))]",
+        // "[parameters('vmCount')]",
         "mode": "parallel"
       },
       "properties": {
@@ -524,11 +559,11 @@
             "virtualMachineSize": {
               "type": "string"
             },
-            "adminUsername": {
+            "LocalAdminUserName": {
               "type": "string"
             },
-            "adminPassword": {
-              "type": "secureString"
+            "LocalAdminPassword": {
+              "type": "securestring"
             },
             "patchMode": {
               "type": "string"
@@ -552,7 +587,7 @@
             //   "type": "string"
             // },
             // "SQLAuthUpdatePassword": {
-            //   "type": "secureString"
+            //   "type": "securestring"
             // },
             // "sqlStorageDisksCount": {
             //   "type": "int"
@@ -788,8 +823,8 @@
                 },
                 "osProfile": {
                   "computerName": "[parameters('virtualMachineComputerName')]",
-                  "adminUsername": "[parameters('adminUsername')]",
-                  "adminPassword": "[parameters('adminPassword')]",
+                  "adminUsername": "[parameters('LocalAdminUserName')]",
+                  "adminPassword": "[parameters('LocalAdminPassword')]",
                   "windowsConfiguration": {
                     "enableAutomaticUpdates": true,
                     "provisionVmAgent": true,
@@ -805,18 +840,20 @@
                   }
                 }
               }
-            },
-            {
-              "name": "[parameters('sqlVirtualMachineName')]",
-              "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-              "apiVersion": "2022-02-01-preview",
-              // "2017-03-01-preview",
-              // "2022-02-01-preview",
-              "location": "[parameters('sqlVirtualMachineLocation')]",
-              "properties": {
-                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]",
-                "sqlManagement": "Full",
-                "SqlServerLicenseType": "[parameters('sqlServerLicenseType')]"
+            }
+            // ,
+            // {
+              // "name": "[parameters('sqlVirtualMachineName')]",
+              // "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+              // "apiVersion": "2022-02-01-preview",
+              // // "2017-03-01-preview",
+              // // "2022-02-01-preview",
+              // "location": "[parameters('sqlVirtualMachineLocation')]",
+              // "properties": {
+              //   "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]",
+              //   "sqlManagement": "Full",
+              //   "SqlServerLicenseType": "[parameters('sqlServerLicenseType')]"
+
                 // ,
                 // "AutoPatchingSettings": {
                 //   "Enable": true,
@@ -871,33 +908,33 @@
                 //     "maxServerMemoryMB": "[parameters('maxServerMemoryMB')]"
                 //   }
                 // }
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]"
-              ]
-            }
+            //   },
+            //   "dependsOn": [
+            //     "[resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVirtualMachineName'))]"
+            //   ]
+            // }
           ],
           "outputs": {
             "adminUsername": {
               "type": "string",
-              "value": "[parameters('adminUsername')]"
+              "value": "[parameters('LocalAdminUserName')]"
             }
           }
         },
         "parameters": {
 
           "sqlServerSku": {
-            "value": "[parameters('sqlServerSku')]"
+            "value": "[parameters('SQLServerSku')]"
           },
           "sqlServerImagePublisher": {
             "value": "MicrosoftSQLServer"
             // "[parameters('sqlServerImagePublisher')]"
           },
           "sqlServerImageType": {
-            "value": "[parameters('sqlServerImageType')]"
+            "value": "[parameters('SQLServerImageType')]"
           },
           "sqlServerLicenseType": {
-            "value": "[parameters('sqlServerLicenseType')]"
+            "value": "[parameters('SQLServerLicenseType')]"
           },
           "location": {
             "value": "[parameters('location')]"
@@ -1002,13 +1039,13 @@
             ]
           },
           "virtualMachineSize": {
-            "value": "[parameters('virtualMachineSize')]"
+            "value": "[parameters('SizeForVirtualMachines')]"
           },
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
+          "LocalAdminUserName": {
+            "value": "[parameters('LocalAdminUserName')]"
           },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
+          "LocalAdminPassword": {
+            "value": "[parameters('LocalAdminPassword')]"
           },
           "patchMode": {
             "value": "AutomaticByOS"
@@ -1192,7 +1229,7 @@
               }
             },
             "domainJoinUserPassword": {
-              "type": "secureString",
+              "type": "securestring",
               "metadata": {
                 "description": "Domain user password"
               }
@@ -1205,7 +1242,8 @@
             },
             "ouPath": {
               "type": "string",
-              "defaultValue": "",
+              "defaultValue": null,
+              // "",
               "metadata": {
                 "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: \"OU=testOU; DC=domain; DC=Domain; DC=com\""
               }
@@ -1253,10 +1291,12 @@
             "value": "[variables('vmList')]"
           },
           "domainJoinUserName": {
-            "value": "[concat(parameters('domainJoinUserName'),'\\',parameters('adminUsername'))]"
+            "value": "[concat(variables('shortDomain'),'\\',parameters('DomainUserName'))]"
+               // parameters('adminUsername'))]"
           },
           "domainJoinUserPassword": {
-            "value": "[parameters('adminPassword')]"
+            "value": "[parameters('DomainUserPassword')]"
+            // "[parameters('adminPassword')]"
           },
           "domainFQDN": {
             "value": "[parameters('domainFQDN')]"
@@ -1329,19 +1369,8 @@
               "metadata": {
                 "description": "Specify an optional Organizational Unit (OU) on AD Domain where the CNO (Computer Object for Cluster Name) will be created (e.g. OU=testou,OU=testou2,DC=contoso,DC=com). Default is empty."
               },
-              "defaultValue": ""
-            },
-            "existingDomainAccount": {
-              "type": "string",
-              "metadata": {
-                "description": "Specify the account for WS failover cluster creation in UPN format (e.g. example@contoso.com). This account can either be a Domain Admin or at least have permissions to create Computer Objects in default or specified OU."
-              }
-            },
-            "domainAccountPassword": {
-              "type": "SecureString",
-              "metadata": {
-                "description": "Specify the password for the domain account"
-              }
+              "defaultValue": null
+              // ""
             },
             "existingSqlServiceAccount": {
               "type": "string",
@@ -1350,7 +1379,7 @@
               }
             },
             "sqlServicePassword": {
-              "type": "SecureString",
+              "type": "securestring",
               "metadata": {
                 "description": "Specify the password for Sql Server service account"
               }
@@ -1360,8 +1389,7 @@
               "metadata": {
                 "description": "Specify the name of the storage account to be used for creating Cloud Witness for Windows server failover cluster"
               },
-              // clwitness
-              "defaultValue": "[concat('t5witness', uniqueString(resourceGroup().id))]"
+              "defaultValue": "[concat('clwitness', uniqueString(resourceGroup().id))]"
             },
             "_artifactsLocation": {
               "type": "string",
@@ -1382,6 +1410,18 @@
               "metadata": {
                 "description": "Location for all resources."
               }
+            },
+            "ClusterBootstrapAccount" : {
+              "type" : "string",
+              "metadata": {
+                "description": "Specify the account for WS failover cluster creation in UPN format (e.g. example@contoso.com). This account can either be a Domain Admin or at least have permissions to create Computer Objects in default or specified OU."
+              }
+            },
+            "ClusterBootstrapAccountPassword" : {
+               "type" : "securestring"
+            },
+            "createNewStorageAccount": {
+               "type" : "bool"
             }
           },
           "variables": {
@@ -1406,6 +1446,8 @@
               }
             },
             {
+               //exist? cond
+              "condition" : "[parameters('createNewStorageAccount')]",
               "type": "Microsoft.Storage/storageAccounts",
               "apiVersion": "2018-07-01",
               "name": "[parameters('cloudWitnessName')]",
@@ -1432,8 +1474,9 @@
                 "WsfcDomainProfile": {
                   "DomainFqdn": "[parameters('existingFullyQualifiedDomainName')]",
                   "OuPath": "[parameters('existingOuPath')]",
-                  "ClusterBootstrapAccount": "[parameters('existingDomainAccount')]",
-                  "ClusterOperatorAccount": "[parameters('existingDomainAccount')]",
+                  "ClusterBootstrapAccount": "[parameters('ClusterBootstrapAccount')]",
+                  // "[parameters('existingDomainAccount')]",
+                  "ClusterOperatorAccount": "[parameters('ClusterBootstrapAccount')]",
                   "SqlServiceAccount": "[parameters('existingSqlServiceAccount')]",
                   "StorageAccountUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessName')), '2018-07-01').primaryEndpoints['blob']]",
                   "StorageAccountPrimaryKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('cloudWitnessName')), '2018-07-01').keys[0].value]"
@@ -1475,15 +1518,14 @@
                     "groupResourceId": {
                       "type": "string"
                     },
-                    "domainAccountPassword": {
-                      "type": "securestring"
-                    },
                     "sqlServicePassword": {
                       "type": "securestring"
-                    }
-                    ,
+                    },
                     "failoverClusterIpArray" : {
                       "type" : "Array"
+                    },
+                    "ClusterBootstrapAccountPassword":{
+                      "type" : "securestring"
                     }
                   },
                   "variables": {
@@ -1505,8 +1547,9 @@
                         "sqlServerLicenseType": "[parameters('sqlServerLicenseType')]",
                         "SqlVirtualMachineGroupResourceId": "[parameters('groupResourceId')]",
                         "WSFCDomainCredentials": {
-                          "ClusterBootstrapAccountPassword": "[parameters('domainAccountPassword')]",
-                          "ClusterOperatorAccountPassword": "[parameters('domainAccountPassword')]",
+                          "ClusterBootstrapAccountPassword": "[parameters('ClusterBootstrapAccountPassword')]",
+                          // "[parameters('domainAccountPassword')]",
+                          "ClusterOperatorAccountPassword": "[parameters('ClusterBootstrapAccountPassword')]",
                           "SqlServiceAccountPassword": "[parameters('sqlServicePassword')]"
                         }
                         ,
@@ -1531,15 +1574,15 @@
                   "groupResourceId": {
                     "value": "[variables('groupResourceId')]"
                   },
-                  "domainAccountPassword": {
-                    "value": "[parameters('domainAccountPassword')]"
-                  },
                   "sqlServicePassword": {
                     "value": "[parameters('sqlServicePassword')]"
                   }
                   ,
                   "failoverClusterIpArray": {
                     "value": "[parameters('failoverClusterIpArray')]"
+                  },
+                  "ClusterBootstrapAccountPassword" : {
+                     "value" : "[parameters('ClusterBootstrapAccountPassword')]"
                   }
                 }
               }
@@ -1561,7 +1604,7 @@
             "value": "[variables('vmList')]"
           },
           "sqlServerLicenseType": {
-            "value": "[parameters('sqlServerLicenseType')]"
+            "value": "[parameters('SQLServerLicenseType')]"
           },
           "sqlServerImageType": {
             "value": "[variables('failoverSQLServerImageType')]"
@@ -1569,17 +1612,25 @@
           "existingFullyQualifiedDomainName": {
             "value": "[parameters('domainFQDN')]"
           },
-          "existingDomainAccount": {
-            "value": "[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
-          },
-          "domainAccountPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
           "existingSqlServiceAccount": {
-            "value": "[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
+            "value" : "[concat(parameters('SQLServiceAccountUserName'),'@',parameters('domainFQDN'))]"
+            // "value": "[concat(parameters('adminUsername'),'@',parameters('domainFQDN'))]"
           },
           "sqlServicePassword": {
-            "value": "[parameters('adminPassword')]"
+            "value" : "[parameters('SQLServiceAccountPassword')]"
+            // "value": "[parameters('adminPassword')]"
+          },
+          "ClusterBootstrapAccount" : {
+            "value" : "[concat(parameters('DomainUserName'),'@',parameters('domainFQDN'))]"
+          },
+          "ClusterBootstrapAccountPassword" : {
+            "value" : "[parameters('DomainUserPassword')]"
+          },
+          "cloudWitnessName" : {
+            "value" : "[parameters('storageAccountName')]"
+          },
+          "createNewStorageAccount" : {
+            "value" : "[parameters('createNewStorageAccount')]"
           }
         }
       }
@@ -1700,12 +1751,6 @@
               "type": "string",
               "metadata": {
                 "description": "Specify the name of the failover cluster"
-              }
-            },
-            "existingSqlAvailabilityGroup": {
-              "type": "string",
-              "metadata": {
-                "description": "Specify the name of SQL Availability Group for which listener is being created"
               }
             },
             "existingVmList": {
@@ -1868,9 +1913,6 @@
           "existingFailoverClusterName": {
             "value": "[parameters('failoverClusterName')]"
           },
-          "existingSqlAvailabilityGroup": {
-            "value": "[parameters('sqlAvailabilityGroup')]"
-          },
           "existingVmList": {
             "value": "[variables('vmList')]"
           },
@@ -1896,7 +1938,7 @@
             "value": "[parameters('ListenerName')]"
           },
           "sqlAvailabilityGroup" : {
-            "value" : "[parameters('sqlAvailabilityGroup')]"
+            "value" : "[parameters('SQLAvailabilityGroup')]"
           },
           "location" : {
             "value" : "[parameters('location')]"
@@ -1906,6 +1948,9 @@
     }
   ],
   "outputs": {
-
+   "errors": {
+      "type": "string",
+      "value": "[if(variables('validParameters'), '', 'Length of subnetNames,failoverClusterIpArray, ListenerIpArray should be equal to VMcount')]"
+    }
   }
 }
