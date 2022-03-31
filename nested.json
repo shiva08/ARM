@@ -29,7 +29,7 @@
     // },
     // "networkSecurityGroupName":{
     //    "type":"string",
-    //    "defaultValue":"NRMS-z6zkw5h6ct25geSQLHAVNET1"
+    //    "defaultValue":"NRMS-z6zkw5h6ct26geSQLHAVNET1"
     // },
     // "subnetNameForAG": {
     //   "type": "string",
@@ -57,14 +57,14 @@
     // },
     // "vmPrefix": {
     //   "type": "string",
-    //   "defaultValue": "t25vmprefix",
+    //   "defaultValue": "t26vmprefix",
     //   "metadata": {
     //     "description": "VMs created : vmPrefix-1, vmPrefix-2"
     //   }
     // },
     "VMNamesForPrimaryAndSecondaryReplicas":{
        "type" : "Array",
-       "defaultValue" : ["t251","t252","t253"],
+       "defaultValue" : ["t261","t262","t263"],
        "metadata": {
         "description": "Maximum number of replicas including primary = 9 , Example syntax: ['vm1','vm2','vm3']"
        }
@@ -72,7 +72,7 @@
     "subnetNames": {
       "type": "Array",
       // "defaultValue": [],
-            "defaultValue": ["Subnet1", "Subnet2", "Subnet3"],
+      "defaultValue": ["Subnet1", "Subnet2", "Subnet3"],
 
       "metadata": {
         "description": "Subnet names have to be distinct to one another and must be equal to number of Replicas. Syntax example: ['Subnet-1','Subnet-2','Subnet-3']. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
@@ -272,29 +272,32 @@
     // },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "t25failcluster",
+      "defaultValue": "t26failcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
       }
     },
-    "failoverClusterIpArray" : {
+    // "failoverClusterIpArray" : {
+    "listOfFailoverClusterIPs" : {
       "type" : "Array",
       "metadata": {
         "description": "Provide array of IPs for failover cluster. Example syntax: ['10.6.2.29','10.6.3.29','10.6.4.29']"
       },
-      "defaultValue" : ["10.6.2.55","10.6.3.55","10.6.4.55"]
+      "defaultValue" : ["10.6.2.57","10.6.3.57","10.6.4.57"]
     },
     "createNewStorageAccount":{
-      "type" : "bool",
-      "defaultValue" : "true",
+      "type" : "string",
+      // "defaultValue" : "true",
+      "defaultValue" : "Yes",
+      "allowedValues": ["Yes", "No"],
       "metadata": {
         "description": "Creates new storage account for Witness."
       }
     },
     "storageAccountName":{
       "type" : "string",
-      "defaultValue" : "t25storage",
+      "defaultValue" : "t26storage",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
@@ -303,7 +306,7 @@
     },
     // "loadBalancerName": {
     //   "type": "string",
-    //   "defaultValue": "t25loadbalance"
+    //   "defaultValue": "t26loadbalance"
     // },
     // "loadBalancerSku": {
     //   "type": "string",
@@ -326,22 +329,23 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "t25ag"
+      "defaultValue": "t26ag"
     },
-    "ListenerName": {
+    "listenerName": {
       "type": "string",
       "maxLength": 15,
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "t25listener"
+      "defaultValue": "t26listener"
     },
-    "ListenerIpArray": {
+    // "ListenerIpArray": {
+    "listOfListenerIPs" : {
       "type": "Array",
       "metadata": {
         "description": "Ensure these IPs are available. Example syntax: ['10.6.2.30','10.6.3.30','10.6.4.30'] "
       },
-      "defaultValue" : ["10.6.2.56","10.6.3.56","10.6.4.56"]
+      "defaultValue" : ["10.6.2.58","10.6.3.58","10.6.4.58"]
     }
     // ,    
     // "ListenerIp": {
@@ -352,8 +356,8 @@
   "variables": {
     // Get 'corp' from 'corp.contoso.com' 
    "shortDomain" : "[toUpper(split(parameters('domainFQDN'), '.')[0])]",
-    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('failoverClusterIpArray')) ), equals(parameters('vmCount'), length(parameters('ListenerIpArray')) )  )]",
-    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('failoverClusterIpArray')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('ListenerIpArray')) )  )]",
+    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('listOfFailoverClusterIPs')) ), equals(parameters('vmCount'), length(parameters('listOfListenerIPs')) )  )]",
+    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfFailoverClusterIPs')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfListenerIPs')) )  )]",
 
     // "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
     // "copy": [
@@ -1622,7 +1626,7 @@
             "value": "[parameters('failoverClusterName')]"
           },
           "failoverClusterIpArray" : {
-            "value" : "[parameters('failoverClusterIpArray')]"
+            "value" : "[parameters('listOfFailoverClusterIPs')]"
           },
           // "existingVmList": {
           //   "value": "[variables('vmList')]"
@@ -1657,7 +1661,8 @@
             "value" : "[parameters('storageAccountName')]"
           },
           "createNewStorageAccount" : {
-            "value" : "[parameters('createNewStorageAccount')]"
+            "value" : "[if(equals(parameters('createNewStorageAccount'), 'Yes'), true, false)]"
+            // "[parameters('createNewStorageAccount')]"
           }
         }
       }
@@ -1976,10 +1981,10 @@
           //   "value": "[parameters('ListenerIp')]"
           // },
           "ListenerIpArray" : {
-            "value" : "[parameters('ListenerIpArray')]"
+            "value" : "[parameters('listOfListenerIPs')]"
           },
           "Listener": {
-            "value": "[parameters('ListenerName')]"
+            "value": "[parameters('listenerName')]"
           },
           "sqlAvailabilityGroup" : {
             "value" : "[parameters('SQLAvailabilityGroup')]"
@@ -1994,7 +1999,7 @@
   "outputs": {
    "errors": {
       "type": "string",
-      "value": "[if(variables('validParameters'), '', 'Length of subnetNames,failoverClusterIpArray, ListenerIpArray should be equal to VMcount')]"
+      "value": "[if(variables('validParameters'), '', 'Array size of subnetNames, listOfFailoverClusterIPs, listOfListenerIPs, VMNamesForPrimaryAndSecondaryReplicas should be equal')]"
     }
   }
 }
