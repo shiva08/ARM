@@ -29,7 +29,7 @@
     // },
     // "networkSecurityGroupName":{
     //    "type":"string",
-    //    "defaultValue":"NRMS-z6zkw5h6ct26geSQLHAVNET1"
+    //    "defaultValue":"NRMS-z6zkw5h6ct27geSQLHAVNET1"
     // },
     // "subnetNameForAG": {
     //   "type": "string",
@@ -57,14 +57,14 @@
     // },
     // "vmPrefix": {
     //   "type": "string",
-    //   "defaultValue": "t26vmprefix",
+    //   "defaultValue": "t27vmprefix",
     //   "metadata": {
     //     "description": "VMs created : vmPrefix-1, vmPrefix-2"
     //   }
     // },
     "VMNamesForPrimaryAndSecondaryReplicas":{
        "type" : "Array",
-       "defaultValue" : ["t261","t262","t263"],
+       "defaultValue" : ["t271","t272","t273"],
        "metadata": {
         "description": "Maximum number of replicas including primary = 9 , Example syntax: ['vm1','vm2','vm3']"
        }
@@ -272,7 +272,7 @@
     // },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "t26failcluster",
+      "defaultValue": "t27failcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -284,7 +284,7 @@
       "metadata": {
         "description": "Provide array of IPs for failover cluster. Example syntax: ['10.6.2.29','10.6.3.29','10.6.4.29']"
       },
-      "defaultValue" : ["10.6.2.57","10.6.3.57","10.6.4.57"]
+      "defaultValue" : ["10.6.2.59","10.6.3.59","10.6.4.59"]
     },
     "createNewStorageAccount":{
       "type" : "string",
@@ -297,7 +297,7 @@
     },
     "storageAccountName":{
       "type" : "string",
-      "defaultValue" : "t26storage",
+      "defaultValue" : "t27storage",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
@@ -306,7 +306,7 @@
     },
     // "loadBalancerName": {
     //   "type": "string",
-    //   "defaultValue": "t26loadbalance"
+    //   "defaultValue": "t27loadbalance"
     // },
     // "loadBalancerSku": {
     //   "type": "string",
@@ -329,7 +329,7 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "t26ag"
+      "defaultValue": "t27ag"
     },
     "listenerName": {
       "type": "string",
@@ -337,7 +337,7 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "t26listener"
+      "defaultValue": "t27listener"
     },
     // "ListenerIpArray": {
     "listOfListenerIPs" : {
@@ -345,7 +345,7 @@
       "metadata": {
         "description": "Ensure these IPs are available. Example syntax: ['10.6.2.30','10.6.3.30','10.6.4.30'] "
       },
-      "defaultValue" : ["10.6.2.58","10.6.3.58","10.6.4.58"]
+      "defaultValue" : ["10.6.2.60","10.6.3.60","10.6.4.60"]
     }
     // ,    
     // "ListenerIp": {
@@ -1006,18 +1006,19 @@
                 "storageAccountType": null,
                 "diskSizeGB": null,
                 "diskEncryptionSet": null
-              },
-              {
-                "lun": 1,
-                "createOption": "attach",
-                "caching": "None",
-                "writeAcceleratorEnabled": false,
-                "id": null,
-                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
-                "storageAccountType": null,
-                "diskSizeGB": null,
-                "diskEncryptionSet": null
               }
+              // ,
+              // {
+              //   "lun": 1,
+              //   "createOption": "attach",
+              //   "caching": "None",
+              //   "writeAcceleratorEnabled": false,
+              //   "id": null,
+              //   "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
+              //   "storageAccountType": null,
+              //   "diskSizeGB": null,
+              //   "diskEncryptionSet": null
+              // }
             ]
           },
           "dataDiskResources": {
@@ -1031,17 +1032,18 @@
                     "createOption": "empty"
                   }
                 }
-              },
-              {
-                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
-                "sku": "Premium_LRS",
-                "properties": {
-                  "diskSizeGB": 1024,
-                  "creationData": {
-                    "createOption": "empty"
-                  }
-                }
               }
+              // ,
+              // {
+              //   "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
+              //   "sku": "Premium_LRS",
+              //   "properties": {
+              //     "diskSizeGB": 1024,
+              //     "creationData": {
+              //       "createOption": "empty"
+              //     }
+              //   }
+              // }
             ]
           },
           "virtualMachineSize": {
@@ -1661,7 +1663,7 @@
             "value" : "[parameters('storageAccountName')]"
           },
           "createNewStorageAccount" : {
-            "value" : "[if(equals(parameters('createNewStorageAccount'), 'Yes'), true, false)]"
+            "value" : "[if(equals(parameters('createNewStorageAccount'), 'Yes'), true(), false())]"
             // "[parameters('createNewStorageAccount')]"
           }
         }
