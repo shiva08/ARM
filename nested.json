@@ -29,7 +29,7 @@
     // },
     // "networkSecurityGroupName":{
     //    "type":"string",
-    //    "defaultValue":"NRMS-z6zkw5h6ct21geSQLHAVNET1"
+    //    "defaultValue":"NRMS-z6zkw5h6ct25geSQLHAVNET1"
     // },
     // "subnetNameForAG": {
     //   "type": "string",
@@ -57,14 +57,14 @@
     // },
     // "vmPrefix": {
     //   "type": "string",
-    //   "defaultValue": "t21vmprefix",
+    //   "defaultValue": "t25vmprefix",
     //   "metadata": {
     //     "description": "VMs created : vmPrefix-1, vmPrefix-2"
     //   }
     // },
     "VMNamesForPrimaryAndSecondaryReplicas":{
        "type" : "Array",
-       "defaultValue" : ["t211","t212","t213"],
+       "defaultValue" : ["t251","t252","t253"],
        "metadata": {
         "description": "Maximum number of replicas including primary = 9 , Example syntax: ['vm1','vm2','vm3']"
        }
@@ -272,7 +272,7 @@
     // },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "t21failcluster",
+      "defaultValue": "t25failcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
@@ -283,7 +283,7 @@
       "metadata": {
         "description": "Provide array of IPs for failover cluster. Example syntax: ['10.6.2.29','10.6.3.29','10.6.4.29']"
       },
-      "defaultValue" : ["10.6.2.47","10.6.3.47","10.6.4.47"]
+      "defaultValue" : ["10.6.2.55","10.6.3.55","10.6.4.55"]
     },
     "createNewStorageAccount":{
       "type" : "bool",
@@ -294,7 +294,7 @@
     },
     "storageAccountName":{
       "type" : "string",
-      "defaultValue" : "storagekyunn",
+      "defaultValue" : "t25storage",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
@@ -303,7 +303,7 @@
     },
     // "loadBalancerName": {
     //   "type": "string",
-    //   "defaultValue": "t21loadbalance"
+    //   "defaultValue": "t25loadbalance"
     // },
     // "loadBalancerSku": {
     //   "type": "string",
@@ -326,7 +326,7 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "t21ag"
+      "defaultValue": "t25ag"
     },
     "ListenerName": {
       "type": "string",
@@ -334,14 +334,14 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "t21listener"
+      "defaultValue": "t25listener"
     },
     "ListenerIpArray": {
       "type": "Array",
       "metadata": {
         "description": "Ensure these IPs are available. Example syntax: ['10.6.2.30','10.6.3.30','10.6.4.30'] "
       },
-      "defaultValue" : ["10.6.2.48","10.6.3.48","10.6.4.48"]
+      "defaultValue" : ["10.6.2.56","10.6.3.56","10.6.4.56"]
     }
     // ,    
     // "ListenerIp": {
@@ -378,13 +378,15 @@
     // "subnetArray" : "[ if(parameters('createSubnets'), variables('subnetArrayHelper'), parameters('subnetNames') ) ]" ,
     // "vmArray" : "[ if(parameters('generateVMNames'), variables('vmArrayHelper'), parameters('VMNamesForPrimaryAndSecondaryReplicas')) ]",
 
-    "subnetArray" : "[ parameters('subnetNames')  ]",
+    // "subnetArray" : "[ parameters('subnetNames')  ]",
     // "vmArray": "[ variables('vmArrayHelper') ]",
 
-    "vmArray" : "[ parameters('VMNamesForPrimaryAndSecondaryReplicas')]",
+    // "vmArray" : "[ parameters('VMNamesForPrimaryAndSecondaryReplicas')]",
 
-    // Convert VM array to a String with VMs separated by comma using string replace
-    "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
+
+    // Use array instead of list - Less error prone
+    // // Convert VM array to a String with VMs separated by comma using string replace
+    // "vmList": "[replace(replace(replace(string(variables('vmArray')),'[',''),']',''),'\"','')]",
 
     "sqlImageArray": "[split(parameters('SQLServerImageType'),'-')]",
 
@@ -470,7 +472,7 @@
     //             "value":"[parameters('virtualNetwork')]"
     //          },
     //          "newSubnetName":{
-    //             "value":"[variables('subnetArray')[copyIndex()]]"
+    //             "value":"[parameters('subnetNames')[copyIndex()]]"
     //          },
     //          "newSubnetAddressPrefix":{
     //             "value":"[variables('subnetIPAddressArray')[copyIndex()]]"
@@ -940,14 +942,14 @@
             "value": "[parameters('location')]"
           },
           "networkInterfaceName": {
-            "value": "[concat(variables('vmArray')[copyIndex()],'-ni')]"
+            "value": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()],'-ni')]"
           },
           "enableAcceleratedNetworking": {
             "value": true
             // "[parameters('enableAcceleratedNetworking')]"
           },
           "networkSecurityGroupName": {
-            "value": "[concat(variables('vmArray')[copyIndex()],'-nsg')]"
+            "value": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()],'-nsg')]"
           },
           "networkSecurityGroupRules": {
             "value": [
@@ -955,7 +957,7 @@
             ]
           },
           "subnetName": {
-            "value":"[variables('subnetArray')[copyIndex()]]"
+            "value":"[parameters('subnetNames')[copyIndex()]]"
             // "value": "[parameters('subnetNameForAG')]"
           },
           "virtualNetworkId": {
@@ -966,7 +968,7 @@
             // "[parameters('createPublicIpAddress')]"
           },
           "publicIpAddressName": {
-            "value": "[concat(variables('vmArray')[copyIndex()],'-ip')]"
+            "value": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()],'-ip')]"
           },
           "publicIpAddressType": {
             "value": "Static"
@@ -977,10 +979,10 @@
             // "[parameters('publicIpAddressSku')]"
           },
           "virtualMachineName": {
-            "value": "[variables('vmArray')[copyIndex()]]"
+            "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()]]"
           },
           "virtualMachineComputerName": {
-            "value": "[variables('vmArray')[copyIndex()]]"
+            "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()]]"
           },
           "virtualMachineRG": {
             "value": "[resourceGroup().name]"
@@ -996,7 +998,7 @@
                 "caching": "ReadOnly",
                 "writeAcceleratorEnabled": false,
                 "id": null,
-                "name": "[concat(variables('vmArray')[copyIndex()], '_DataDisk_0')]",
+                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_0')]",
                 "storageAccountType": null,
                 "diskSizeGB": null,
                 "diskEncryptionSet": null
@@ -1007,7 +1009,7 @@
                 "caching": "None",
                 "writeAcceleratorEnabled": false,
                 "id": null,
-                "name": "[concat(variables('vmArray')[copyIndex()], '_DataDisk_1')]",
+                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
                 "storageAccountType": null,
                 "diskSizeGB": null,
                 "diskEncryptionSet": null
@@ -1017,7 +1019,7 @@
           "dataDiskResources": {
             "value": [
               {
-                "name": "[concat(variables('vmArray')[copyIndex()], '_DataDisk_0')]",
+                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_0')]",
                 "sku": "Premium_LRS",
                 "properties": {
                   "diskSizeGB": 1024,
@@ -1027,7 +1029,7 @@
                 }
               },
               {
-                "name": "[concat(variables('vmArray')[copyIndex()], '_DataDisk_1')]",
+                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
                 "sku": "Premium_LRS",
                 "properties": {
                   "diskSizeGB": 1024,
@@ -1057,7 +1059,7 @@
             "value": "[parameters('location')]"
           },
           "sqlVirtualMachineName": {
-            "value": "[variables('vmArray')[copyIndex()]]"
+            "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()]]"
           }
           // ,
           // "sqlConnectivityType": {
@@ -1209,11 +1211,17 @@
           "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
           "parameters": {
-            "vmList": {
-              "type": "string",
-              "minLength": 1,
+            // "vmList": {
+            //   "type": "string",
+            //   "minLength": 1,
+            //   "metadata": {
+            //     "description": "List of virtual machines to be domain joined, if using multiple VMs, make their names comma separate. E.g. VM01, VM02, VM03."
+            //   }
+            // },
+            "vmArray": {
+              "type": "Array",
               "metadata": {
-                "description": "List of virtual machines to be domain joined, if using multiple VMs, make their names comma separate. E.g. VM01, VM02, VM03."
+                "description": "Array of virtual machines to be domain joined, if using multiple VMs. E.g. ['VM01', 'VM02', 'VM03']."
               }
             },
             "location": {
@@ -1242,27 +1250,30 @@
             },
             "ouPath": {
               "type": "string",
-              "defaultValue": null,
-              // "",
+              "defaultValue": "",
               "metadata": {
                 "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: \"OU=testOU; DC=domain; DC=Domain; DC=com\""
               }
             }
           },
           "variables": {
-            "domainJoinOptions": 3,
-            "vmListArray": "[split(parameters('vmList'),',')]"
+            "domainJoinOptions": 3
+            // ,
+            // "vmListArray": "[split(parameters('vmList'),',')]"
           },
           "resources": [
             {
               "comments": "Join domain - JsonADDomainExtension",
               "apiVersion": "2015-06-15",
               "type": "Microsoft.Compute/virtualMachines/extensions",
-              "name": "[concat(trim(variables('vmListArray')[copyIndex()]),'/joindomain')]",
+              // "name": "[concat(trim(variables('vmListArray')[copyIndex()]),'/joindomain')]",
+              "name": "[concat(trim(parameters('vmArray')[copyIndex()]),'/joindomain')]",
               "location": "[parameters('location')]",
               "copy": {
                 "name": "vmDomainJoinCopy",
-                "count": "[length(variables('vmListArray'))]"
+                // "count": "[length(variables('vmListArray'))]",
+                "count": "[length(parameters('vmArray'))]"
+
               },
               "properties": {
                 "publisher": "Microsoft.Compute",
@@ -1287,8 +1298,11 @@
           "location": {
             "value": "[parameters('location')]"
           },
-          "vmList": {
-            "value": "[variables('vmList')]"
+          // "vmList": {
+          //   "value": "[variables('vmList')]"
+          // },
+          "vmArray": {
+            "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')]"
           },
           "domainJoinUserName": {
             "value": "[concat(variables('shortDomain'),'\\',parameters('DomainUserName'))]"
@@ -1331,10 +1345,16 @@
             "failoverClusterIpArray": {
                "type" : "Array"
             },
-            "existingVmList": {
-              "type": "string",
+            // "existingVmList": {
+            //   "type": "string",
+            //   "metadata": {
+            //     "description": "Specify comma separated list of names of SQL Server VM's to participate in the Availability Group (e.g. SQLVM1, SQLVM2). OS underneath should be at least WS 2016."
+            //   }
+            // },
+            "existingVmArray": {
+              "type": "Array",
               "metadata": {
-                "description": "Specify comma separated list of names of SQL Server VM's to participate in the Availability Group (e.g. SQLVM1, SQLVM2). OS underneath should be at least WS 2016."
+                "description": "Specify array of names of SQL Server VM's to participate in the Availability Group (e.g. ['SQLVM1', 'SQLVM2'] ). OS underneath should be at least WS 2016."
               }
             },
             "sqlServerLicenseType": {
@@ -1369,8 +1389,7 @@
               "metadata": {
                 "description": "Specify an optional Organizational Unit (OU) on AD Domain where the CNO (Computer Object for Cluster Name) will be created (e.g. OU=testou,OU=testou2,DC=contoso,DC=com). Default is empty."
               },
-              "defaultValue": null
-              // ""
+              "defaultValue": ""
             },
             "existingSqlServiceAccount": {
               "type": "string",
@@ -1425,7 +1444,7 @@
             }
           },
           "variables": {
-            "existingVMListArray": "[split(parameters('existingVmList'),',')]",
+            // "existingVMListArray": "[split(parameters('existingVmList'),',')]",
             "GroupResourceId": "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups', parameters('failoverClusterName'))]"
           },
           "resources": [
@@ -1434,14 +1453,18 @@
               "apiVersion": "2022-02-01-preview",
 
               // "2017-03-01-preview",
-              "name": "[trim(variables('existingVMListArray')[copyIndex()])]",
+              // "name": "[trim(variables('existingVMListArray')[copyIndex()])]",
+              "name": "[trim(parameters('existingVmArray')[copyIndex()])]",
               "location": "[parameters('location')]",
               "copy": {
                 "name": "sqlvirtualMachineLoop",
-                "count": "[length(variables('existingVMListArray'))]"
+                // "count": "[length(variables('existingVMListArray'))]",
+                "count": "[length(parameters('existingVmArray'))]"
+
               },
               "properties": {
-                "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(variables('existingVMListArray')[copyIndex()]))]",
+                // "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(variables('existingVMListArray')[copyIndex()]))]",
+                "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(parameters('existingVmArray')[copyIndex()]))]",
                 "sqlServerLicenseType": "[parameters('sqlServerLicenseType')]"
               }
             },
@@ -1560,7 +1583,8 @@
                 },
                 "parameters": {
                   "existingVirtualMachineNames": {
-                    "value": "[variables('existingVMListArray')]"
+                    // "value": "[variables('existingVMListArray')]"
+                    "value": "[parameters('existingVmArray')]"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -1600,8 +1624,11 @@
           "failoverClusterIpArray" : {
             "value" : "[parameters('failoverClusterIpArray')]"
           },
-          "existingVmList": {
-            "value": "[variables('vmList')]"
+          // "existingVmList": {
+          //   "value": "[variables('vmList')]"
+          // },
+          "existingVmArray": {
+            "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')]"
           },
           "sqlServerLicenseType": {
             "value": "[parameters('SQLServerLicenseType')]"
@@ -1753,10 +1780,16 @@
                 "description": "Specify the name of the failover cluster"
               }
             },
-            "existingVmList": {
-              "type": "string",
+            // "existingVmList": {
+            //   "type": "string",
+            //   "metadata": {
+            //     "description": "Specify the Virtual machine list participating in SQL Availability Group e.g. VM1, VM2. Maximum number is 6."
+            //   }
+            // },
+            "existingVmArray": {
+              "type": "Array",
               "metadata": {
-                "description": "Specify the Virtual machine list participating in SQL Availability Group e.g. VM1, VM2. Maximum number is 6."
+                "description": "Specify the array of Virtual machines participating in SQL Availability Group e.g. ['VM1', 'VM2']. Maximum number is 9."
               }
             },
             "Listener": {
@@ -1836,19 +1869,20 @@
             }
           },
           "variables": {
-            "VmArray": "[split(parameters('existingVmList'),',')]",
+            // "VmArray": "[split(parameters('existingVmList'),',')]"
+            // ,
             // "LoadBalancerResourceId": "[resourceId('Microsoft.Network/loadBalancers', parameters('existingInternalLoadBalancer'))]",
             // "SubnetResourceId": "[concat(resourceid(parameters('existingVnetResourcegroup'),'Microsoft.Network/virtualNetworks', parameters('existingVnet')), '/subnets/', parameters('existingSubnet'))]",
-            "VM0": "[if(less(0, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[0]))), json('[]'))]",
-            "VM1": "[if(less(1, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[1]))), json('[]'))]",
-            "VM2": "[if(less(2, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[2]))), json('[]'))]",
-            "VM3": "[if(less(3, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[3]))), json('[]'))]",
-            "VM4": "[if(less(4, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[4]))), json('[]'))]",
-            "VM5": "[if(less(5, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[5]))), json('[]'))]",
-            "VM6": "[if(less(6, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[6]))), json('[]'))]",
-            "VM7": "[if(less(7, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[7]))), json('[]'))]",
-            "VM8": "[if(less(8, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[8]))), json('[]'))]",
-            "SqlVmResourceIdList": "[union(variables('VM0'), variables('VM1'), variables('VM2'), variables('VM3'), variables('VM4'), variables('VM5'), variables('VM6'), variables('VM7'), variables('VM8'))]"
+            // "VM0": "[if(less(0, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[0]))), json('[]'))]",
+            // "VM1": "[if(less(1, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[1]))), json('[]'))]",
+            // "VM2": "[if(less(2, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[2]))), json('[]'))]",
+            // "VM3": "[if(less(3, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[3]))), json('[]'))]",
+            // "VM4": "[if(less(4, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[4]))), json('[]'))]",
+            // "VM5": "[if(less(5, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[5]))), json('[]'))]",
+            // "VM6": "[if(less(6, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[6]))), json('[]'))]",
+            // "VM7": "[if(less(7, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[7]))), json('[]'))]",
+            // "VM8": "[if(less(8, length(variables('VmArray'))), createArray(resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', trim(variables('VmArray')[8]))), json('[]'))]",
+            // "SqlVmResourceIdList": "[union(variables('VM0'), variables('VM1'), variables('VM2'), variables('VM3'), variables('VM4'), variables('VM5'), variables('VM6'), variables('VM7'), variables('VM8'))]"
           },
           "resources": [
             {
@@ -1864,9 +1898,12 @@
                   "copy": [
                     {
                       "name": "Replicas",
-                      "count": "[length(variables('VmArray'))]",
+                      // "count": "[length(variables('VmArray'))]",
+                      "count": "[length(parameters('existingVmArray'))]",
                       "input": {
-                        "sqlVirtualMachineInstanceId": "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
+                        // "sqlVirtualMachineInstanceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('Replicas')] )]",
+                        "sqlVirtualMachineInstanceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', parameters('existingVmArray')[copyIndex('Replicas')] )]",                        
+                        // "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
                         "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
                         // "failover": "Automatic",
                         // "commit": "Synchronous_Commit",
@@ -1881,14 +1918,18 @@
                "copy": [
                     {
                       "name": "multiSubnetIpConfigurations",
-                      "count": "[length(variables('VmArray'))]",
+                      // "count": "[length(variables('VmArray'))]",
+                      // "count": "[length(variables('existingVmArray'))]",
+                      "count": "[length(parameters('existingVmArray'))]",
+
                       "input": {
                         "privateIpAddress": {
                            "ipAddress": "[parameters('ListenerIpArray')[copyIndex('multiSubnetIpConfigurations')]]",
                            "subnetResourceId" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVnet'), '/subnets/', parameters('existingSubnetArray')[copyIndex('multiSubnetIpConfigurations')] )]"
                            // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.network/virtualNetworks/test-vnet/subnets/default",
                         },
-                        "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
+                        // "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
+                        "sqlVirtualMachineInstance" : "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', parameters('existingVmArray')[copyIndex('multiSubnetIpConfigurations')] )]" 
                            // "/subscriptions/09df/resourceGroups/testrg/providers/Microaoft.SqlVirtualMachine/sqlVirtualMachines/testvm"
                       }
                     }
@@ -1913,8 +1954,11 @@
           "existingFailoverClusterName": {
             "value": "[parameters('failoverClusterName')]"
           },
-          "existingVmList": {
-            "value": "[variables('vmList')]"
+          // "existingVmList": {
+          //   "value": "[variables('vmList')]"
+          // },
+          "existingVmArray": {
+            "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')]"
           },
           "existingVnet": {
             "value": "[parameters('virtualNetwork')]"
@@ -1923,7 +1967,7 @@
           //   "value": "[parameters('subnetNameForAG')]"
           // },
           "existingSubnetArray": {
-            "value" : "[variables('subnetArray')]"
+            "value" : "[parameters('subnetNames')]"
           },
           // "existingInternalLoadBalancer": {
           //   "value": "[parameters('loadBalancerName')]"
