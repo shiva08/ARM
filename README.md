@@ -3,7 +3,8 @@
 Prerequisites
 1. A Virtual Network
 2. A domain controller VM
-3. Subnets for VMs         (vmCount = subnetCount)
+3. Accounts - LocalAdmin, SQL service, DomainAdmin
+4. Subnets for VMs 
 
 
 Multi subnet template(nested.json) has these features:
