@@ -88,7 +88,7 @@
     "SQLServerImageType": {
       "type": "string",
       "defaultValue": "SQL2016SP2-WS2016",
-      "allowedValues": ["SQL2008R2SP3-WS2008R2SP1", "SQL2008R2SP3-WS2008R2SP1-BYOL", "SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2-BYOL", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP3-WS2012R2", "SQL2014SP3-WS2012R2-BYOL", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016-BYOL", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2019", "SQL2016SP2-WS2019-BYOL", "SQL2016SP3-WS2019", "SQL2017-WS2016", "SQL2017-WS2016-BYOL", "SQL2017-WS2019", "SQL2017-WS2019-BYOL", "SQL2019-WS2019", "SQL2019-WS2019-BYOL", "SQL2019-WS2022"]
+      "allowedValues": ["SQL2012SP4-WS2012R2", "SQL2012SP4-WS2012R2-BYOL", "SQL2014SP2-WS2012R2", "SQL2014SP2-WS2012R2-BYOL", "SQL2014SP3-WS2012R2", "SQL2014SP3-WS2012R2-BYOL", "SQL2016SP1-WS2016", "SQL2016SP1-WS2016-BYOL", "SQL2016SP2-WS2012R2", "SQL2016SP2-WS2016", "SQL2016SP2-WS2016-BYOL", "SQL2016SP2-WS2019", "SQL2016SP2-WS2019-BYOL", "SQL2016SP3-WS2019", "SQL2017-WS2016", "SQL2017-WS2016-BYOL", "SQL2017-WS2019", "SQL2017-WS2019-BYOL", "SQL2019-WS2019", "SQL2019-WS2019-BYOL", "SQL2019-WS2022"]
     },
     "SQLServerSku": {
       "type": "string",
@@ -279,7 +279,7 @@
       }
     },
     // "failoverClusterIpArray" : {
-    "listOfFailoverClusterIPs" : {
+    "listOfFailoverClusterIps" : {
       "type" : "Array",
       "metadata": {
         "description": "Provide array of IPs for failover cluster. Example syntax: ['10.6.2.29','10.6.3.29','10.6.4.29']"
@@ -356,8 +356,8 @@
   "variables": {
     // Get 'corp' from 'corp.contoso.com' 
    "shortDomain" : "[toUpper(split(parameters('domainFQDN'), '.')[0])]",
-    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('listOfFailoverClusterIPs')) ), equals(parameters('vmCount'), length(parameters('listOfListenerIPs')) )  )]",
-    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfFailoverClusterIPs')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfListenerIPs')) )  )]",
+    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('listOfFailoverClusterIps')) ), equals(parameters('vmCount'), length(parameters('listOfListenerIPs')) )  )]",
+    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfFailoverClusterIps')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfListenerIPs')) )  )]",
 
     // "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
     // "copy": [
@@ -1628,7 +1628,7 @@
             "value": "[parameters('failoverClusterName')]"
           },
           "failoverClusterIpArray" : {
-            "value" : "[parameters('listOfFailoverClusterIPs')]"
+            "value" : "[parameters('listOfFailoverClusterIps')]"
           },
           // "existingVmList": {
           //   "value": "[variables('vmList')]"
@@ -2001,7 +2001,7 @@
   "outputs": {
    "errors": {
       "type": "string",
-      "value": "[if(variables('validParameters'), '', 'Array size of subnetNames, listOfFailoverClusterIPs, listOfListenerIPs, VMNamesForPrimaryAndSecondaryReplicas should be equal')]"
+      "value": "[if(variables('validParameters'), '', 'Array size of subnetNames, listOfFailoverClusterIps, listOfListenerIPs, VMNamesForPrimaryAndSecondaryReplicas should be equal')]"
     }
   }
 }
