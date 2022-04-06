@@ -75,7 +75,7 @@
       "defaultValue": ["Subnet1", "Subnet2", "Subnet3"],
 
       "metadata": {
-        "description": "Subnet names have to be distinct to one another and must be equal to number of Replicas. Syntax example: ['Subnet-1','Subnet-2','Subnet-3']. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
+        "description": "Subnet names have to be distinct to one another and must be equal to number of Replicas. Syntax example: [\"Subnet-1\",\"Subnet-2\",\"Subnet-3\"]. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
       }
     },
     // "sqlServerImagePublisher": {
@@ -108,7 +108,7 @@
       "defaultValue": "PAYG",
       "allowedValues": [ "PAYG", "AHUB" ],
       "metadata": {
-        "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits. You should use 'AHUB' if BYOL SQL image was used."
+        "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits. You should use \"AHUB\" if BYOL SQL image was used."
       }
     },
     "LocalAdminUserName": {
@@ -151,7 +151,7 @@
       "defaultValue" : "DomainAdmin",
       // "bootstrap" 
       "metadata": {
-        "description": "This account is used to create FCI name in Acitve directory and join VM's to Domain"
+        "description": "This account is used to create FCI name in Acitve directory and join VMs to Domain"
       }    
     },
     "DomainUserPassword" : {
