@@ -3162,7 +3162,8 @@ offers = []
 for b in t:
     a = b["offer"]
     p = a.index('-')
-    if a[p+1:p+3].lower()=="ws":
+    # AG works with WS>=2012
+    if a[p+1:p+3].lower()=="ws" and int(a[3:7])>=2012:  
       # if int(a[3:7])>=2016:
       #   if b["sku"].lower() in ["enterprise","standard","developer"]:
       #     offers += [a.upper()]
