@@ -66,7 +66,7 @@
        "type" : "Array",
        "defaultValue" : ["t271","t272","t273"],
        "metadata": {
-        "description": "Maximum number of replicas including primary = 9 , Example syntax: ['vm1','vm2','vm3']"
+        "description": "Maximum number of replicas including primary = 9 , Example syntax: [\"vm1\",\"vm2\",\"vm3\"].  If these VMs already exist, they should have been created by this template"
        }
     },
     "subnetNames": {
@@ -282,7 +282,7 @@
     "listOfFailoverClusterIps" : {
       "type" : "Array",
       "metadata": {
-        "description": "Provide array of IPs for failover cluster. Example syntax: ['10.6.2.29','10.6.3.29','10.6.4.29']"
+        "description": "Provide array of IPs for failover cluster. Example syntax: [\"10.6.2.29\",\"10.6.3.29\",\"10.6.4.29\"].  Ensure these IPs are available from the respective Subnets."
       },
       "defaultValue" : ["10.6.2.59","10.6.3.59","10.6.4.59"]
     },
@@ -343,7 +343,7 @@
     "listOfListenerIps" : {
       "type": "Array",
       "metadata": {
-        "description": "Ensure these IPs are available. Example syntax: ['10.6.2.30','10.6.3.30','10.6.4.30'] "
+        "description": "Ensure these IPs are available. Example syntax: [\"10.6.2.30\",\"10.6.3.30\",\"10.6.4.30\"].  Ensure these IPs are available from the respective Subnets. "
       },
       "defaultValue" : ["10.6.2.60","10.6.3.60","10.6.4.60"]
     }
