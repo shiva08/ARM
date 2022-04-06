@@ -340,7 +340,7 @@
       "defaultValue": "t27listener"
     },
     // "ListenerIpArray": {
-    "listOfListenerIPs" : {
+    "listOfListenerIps" : {
       "type": "Array",
       "metadata": {
         "description": "Ensure these IPs are available. Example syntax: ['10.6.2.30','10.6.3.30','10.6.4.30'] "
@@ -356,8 +356,8 @@
   "variables": {
     // Get 'corp' from 'corp.contoso.com' 
    "shortDomain" : "[toUpper(split(parameters('domainFQDN'), '.')[0])]",
-    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('listOfFailoverClusterIps')) ), equals(parameters('vmCount'), length(parameters('listOfListenerIPs')) )  )]",
-    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfFailoverClusterIps')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfListenerIPs')) )  )]",
+    // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('listOfFailoverClusterIps')) ), equals(parameters('vmCount'), length(parameters('listOfListenerIps')) )  )]",
+    "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfFailoverClusterIps')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfListenerIps')) )  )]",
 
     // "AddressRangeArray":"[split(parameters('IPAddressSpace'), '.')]",
     // "copy": [
@@ -1983,7 +1983,7 @@
           //   "value": "[parameters('ListenerIp')]"
           // },
           "ListenerIpArray" : {
-            "value" : "[parameters('listOfListenerIPs')]"
+            "value" : "[parameters('listOfListenerIps')]"
           },
           "Listener": {
             "value": "[parameters('listenerName')]"
@@ -2001,7 +2001,7 @@
   "outputs": {
    "errors": {
       "type": "string",
-      "value": "[if(variables('validParameters'), '', 'Array size of subnetNames, listOfFailoverClusterIps, listOfListenerIPs, VMNamesForPrimaryAndSecondaryReplicas should be equal')]"
+      "value": "[if(variables('validParameters'), '', 'Array size of subnetNames, listOfFailoverClusterIps, listOfListenerIps, VMNamesForPrimaryAndSecondaryReplicas should be equal')]"
     }
   }
 }
