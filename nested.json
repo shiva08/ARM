@@ -2,9 +2,14 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "virtualNetwork": {
+    // virtualNetwork
+    "existingVirtualNetworkName": {
       "type": "string",
       "defaultValue": "SQLHAVNET"
+    },
+    "existingVirtualNetworkResourceGroupName": {
+      "type": "string",
+      "defaultValue": "SQL-HA-RG"
     },
     "location": {
       "type" : "string",
@@ -29,7 +34,7 @@
     // },
     // "networkSecurityGroupName":{
     //    "type":"string",
-    //    "defaultValue":"NRMS-z6zkw5h6ct27geSQLHAVNET1"
+    //    "defaultValue":"NRMS-z6zkw5h6ct39geSQLHAVNET1"
     // },
     // "subnetNameForAG": {
     //   "type": "string",
@@ -57,16 +62,16 @@
     // },
     // "vmPrefix": {
     //   "type": "string",
-    //   "defaultValue": "t27vmprefix",
+    //   "defaultValue": "t39vmprefix",
     //   "metadata": {
     //     "description": "VMs created : vmPrefix-1, vmPrefix-2"
     //   }
     // },
     "VMNamesForPrimaryAndSecondaryReplicas":{
        "type" : "Array",
-       "defaultValue" : ["t271","t272","t273"],
+       "defaultValue" : ["t391","t392","t393"],
        "metadata": {
-        "description": "Maximum number of replicas including primary = 9 , Example syntax: [\"vm1\",\"vm2\",\"vm3\"].  If these VMs already exist, they should have been created by this template"
+        "description": "Maximum number of replicas including primary = 9 , Example syntax: [\"vm1\",\"vm2\",\"vm3\"]. If these VMs already exist, they should have been created by this template, else failover cluster can't be created."
        }
     },
     "subnetNames": {
@@ -77,6 +82,22 @@
       "metadata": {
         "description": "Subnet names have to be distinct to one another and must be equal to number of Replicas. Syntax example: [\"Subnet-1\",\"Subnet-2\",\"Subnet-3\"]. Docs : https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet#add-a-subnet"
       }
+    },
+    // "failoverClusterIpArray" : {
+    "listOfFailoverClusterIps" : {
+      "type" : "Array",
+      "metadata": {
+        "description": "Provide array of IPs for failover cluster. Example syntax: [\"10.6.2.29\",\"10.6.3.29\",\"10.6.4.29\"]. Ensure these IPs are available from the respective Subnets."
+      },
+      "defaultValue" : ["10.6.2.71","10.6.3.71","10.6.4.71"]
+    },
+    // "ListenerIpArray": {
+    "listOfListenerIps" : {
+      "type": "Array",
+      "metadata": {
+        "description": "Ensure these IPs are available. Example syntax: [\"10.6.2.30\",\"10.6.3.30\",\"10.6.4.30\"].  Ensure these IPs are available from the respective Subnets."
+      },
+      "defaultValue" : ["10.6.2.72","10.6.3.72","10.6.4.72"]
     },
     // "sqlServerImagePublisher": {
     //   "type": "string",
@@ -108,12 +129,15 @@
       "defaultValue": "PAYG",
       "allowedValues": [ "PAYG", "AHUB" ],
       "metadata": {
-        "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits. You should use \"AHUB\" if BYOL SQL image was used."
+        "description": "PAYG : Pay As You Go, AHUB : Azure Hybrid Use Benefits. You should use \"AHUB\" if BYOL SQL image was used. If you have SQL Server licenses with Software Assurance(SA) or a SQL Server subscription, use Azure HybridBenefit to save."
       }
     },
     "LocalAdminUserName": {
       "type": "string",
-      "defaultValue": "LocalAdmin"
+      "defaultValue": "LocalAdmin",
+      "metadata": {
+        "description": "This account will be used as a local admin for virtual machines."
+      } 
     },
     "LocalAdminPassword": {
       "type": "securestring",
@@ -121,7 +145,10 @@
     },
     "SQLServiceAccountUserName":{
        "type":"string",
-       "defaultValue":"sqlserviceaccount"
+       "defaultValue":"sqlserviceaccount",
+      "metadata": {
+        "description": "This account is used for managing SQL servers on VMs."
+      } 
     },
     "SQLServiceAccountPassword":{
        "type":"securestring",
@@ -151,7 +178,7 @@
       "defaultValue" : "DomainAdmin",
       // "bootstrap" 
       "metadata": {
-        "description": "This account is used to create FCI name in Acitve directory and join VMs to Domain"
+        "description": "This account is used to create FCI name in Acitve directory and join VM's to Domain"
       }    
     },
     "DomainUserPassword" : {
@@ -187,8 +214,16 @@
       "type": "string",
       "defaultValue": "Standard_D2s_v3",
       "metadata": {
-        "description": "Please select a size from the list mentioned here: https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile. Note that the same size will be applied to all the replicas."
+        "description": "Please select size from the list mentioned here: https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/virtualmachines?tabs=bicep#hardwareprofile. Note that the same size will be applied to all the replicas."
       }
+    },
+    "availabilitySetName": {
+      "type": "string",
+      "defaultValue": "t39availsets",
+      "metadata" : {
+         "description" : "https://docs.microsoft.com/en-us/azure/virtual-machines/availability-set-overview"
+      }
+
     },
     // "KeyVaultCredentialEnabled": {
     //    "type" : "bool",
@@ -272,19 +307,11 @@
     // },
     "failoverClusterName": {
       "type": "string",
-      "defaultValue": "t27failcluster",
+      "defaultValue": "t39failcluster",
       "maxLength": 15,
       "metadata": {
         "description": "Specify the Windows Failover Cluster Name. Maximum length is 15"
       }
-    },
-    // "failoverClusterIpArray" : {
-    "listOfFailoverClusterIps" : {
-      "type" : "Array",
-      "metadata": {
-        "description": "Provide array of IPs for failover cluster. Example syntax: [\"10.6.2.29\",\"10.6.3.29\",\"10.6.4.29\"].  Ensure these IPs are available from the respective Subnets."
-      },
-      "defaultValue" : ["10.6.2.59","10.6.3.59","10.6.4.59"]
     },
     "createNewStorageAccount":{
       "type" : "string",
@@ -297,7 +324,7 @@
     },
     "storageAccountName":{
       "type" : "string",
-      "defaultValue" : "t27storage",
+      "defaultValue" : "t39storage",
       "minLength": 3,
       "maxLength": 24,
       "metadata": {
@@ -306,7 +333,7 @@
     },
     // "loadBalancerName": {
     //   "type": "string",
-    //   "defaultValue": "t27loadbalance"
+    //   "defaultValue": "t39loadbalance"
     // },
     // "loadBalancerSku": {
     //   "type": "string",
@@ -329,7 +356,7 @@
       "metadata": {
         "description": "Ensure there is no AG with same name registered with domain controller."
       },
-      "defaultValue": "t27ag"
+      "defaultValue": "t39ag"
     },
     "listenerName": {
       "type": "string",
@@ -337,15 +364,7 @@
       "metadata": {
         "description": "Maximum length of AG Listener is 15. Ensure a listener with same name doesn't exist with domain controller."
       },
-      "defaultValue": "t27listener"
-    },
-    // "ListenerIpArray": {
-    "listOfListenerIps" : {
-      "type": "Array",
-      "metadata": {
-        "description": "Ensure these IPs are available. Example syntax: [\"10.6.2.30\",\"10.6.3.30\",\"10.6.4.30\"].  Ensure these IPs are available from the respective Subnets. "
-      },
-      "defaultValue" : ["10.6.2.60","10.6.3.60","10.6.4.60"]
+      "defaultValue": "t39listener"
     }
     // ,    
     // "ListenerIp": {
@@ -354,8 +373,10 @@
     // }
   },
   "variables": {
-    // Get 'corp' from 'corp.contoso.com' 
+   // "existingVirtualNetworkResourceGroupId": "[concat('/subscriptions/', subscription().subscriptionId, /resourceGroups/', parameters('existingVirtualNetworkResourceGroupName'))]",
    "shortDomain" : "[toUpper(split(parameters('domainFQDN'), '.')[0])]",
+
+    // Check if vmcount = subnetcount, listenerip count, failover ip count
     // "validParameters" : "[and( equals(parameters('vmCount'), length(parameters('subnetNames'))) , equals(parameters('vmCount'), length(parameters('listOfFailoverClusterIps')) ), equals(parameters('vmCount'), length(parameters('listOfListenerIps')) )  )]",
     "validParameters" : "[and( equals( length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('subnetNames'))) , equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfFailoverClusterIps')) ), equals(length(parameters('VMNamesForPrimaryAndSecondaryReplicas')), length(parameters('listOfListenerIps')) )  )]",
 
@@ -394,8 +415,10 @@
 
     "sqlImageArray": "[split(parameters('SQLServerImageType'),'-')]",
 
-    //Construct SQL2008-WS2008 from SQL2008R2SP3-WS2008R2SP1-BYOL
-    "failoverSQLServerImageType" : "[concat(substring(variables('sqlImageArray')[0],0,7),'-',substring(variables('sqlImageArray')[1],0,6))]"
+    //  Construct the value from sqlImageArray
+    //  Eg: sqlImageArray - SQL2016R2SP3-WS2016R2SP1-BYOL
+    //      failoverSQLServerImageType : SQL2016-WS2016  
+    "failoverSQLServerImageType" : "[concat(substring(variables('sqlImageArray')[0],0,7),'-',variables('sqlImageArray')[1])]"
     // ,
     // "AddSubnetToVnetUri":"https://raw.githubusercontent.com/shiva08/ARM/main/add-subnet-to-existing-vnet.json",
     // "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/quickstarts/microsoft.network/subnet-add-vnet-existing/azuredeploy.json",
@@ -487,15 +510,37 @@
     //       }
     //    }
     // },
+
+      {
+         "condition" : "[variables('validParameters')]",
+         "type": "Microsoft.Compute/availabilitySets",
+         "apiVersion": "2020-12-01",
+         // "2016-04-30-preview",
+         "name": "[parameters('availabilitySetName')]",
+         "location": "[parameters('location')]",
+         "tags": {},
+         "sku": {
+             "name": "Aligned"
+         },
+         "properties": {
+             "platformUpdateDomainCount": "1",
+             "platformFaultDomainCount": "1"
+             // ,
+             // "virtualMachines": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')]"
+         }
+      },
     {
       "condition" : "[variables('validParameters')]",
       // "condition": "[parameters('createVM')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2021-04-01",
-      "name": "[concat('create-sqlvm', '-', uniqueString(resourceGroup().id), '-', copyIndex())]",
-      // "dependsOn":[
-      //    "Add-Subnet-To-Vnet"
-      // ],
+      "name": "[concat('create-sqlvm', '-', uniqueString(concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('existingVirtualNetworkResourceGroupName'))), '-', copyIndex())]",
+      "dependsOn":[
+         "[parameters('availabilitySetName')]"
+
+         // "[resourceId('Microsoft.Compute/availabilitySets/',parameters('availabilitySetName'))]"
+         // "Add-Subnet-To-Vnet"
+      ],
       "copy": {
         "name": "Create-SQLVM",
         "count": "[length(parameters('VMNamesForPrimaryAndSecondaryReplicas'))]",
@@ -511,6 +556,9 @@
           "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
           "contentVersion": "1.0.0.0",
           "parameters": {
+            "availabilitySetName":{
+               "type" : "string"
+            },
             "location": {
               "type": "string"
             },
@@ -550,18 +598,15 @@
             "virtualMachineComputerName": {
               "type": "string"
             },
-            "virtualMachineRG": {
-              "type": "string"
-            },
             "osDiskType": {
               "type": "string"
             },
-            "dataDisks": {
-              "type": "array"
-            },
-            "dataDiskResources": {
-              "type": "array"
-            },
+            // "dataDisks": {
+            //   "type": "array"
+            // },
+            // "dataDiskResources": {
+            //   "type": "array"
+            // },
             "virtualMachineSize": {
               "type": "string"
             },
@@ -701,9 +746,13 @@
             // "sqlAkvPrincipalSecret": {
             //   "type": "string"
             // }
+            ,
+            "existingVirtualNetworkResourceGroupName":{
+              "type" : "string"
+            }
           },
           "variables": {
-            "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
+            "nsgId": "[resourceId(parameters('existingVirtualNetworkResourceGroupName'), 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
             "vnetId": "[parameters('virtualNetworkId')]",
             "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
           },
@@ -726,7 +775,7 @@
                         "id": "[variables('subnetRef')]"
                       },
                       "privateIPAllocationMethod": "Dynamic",
-                      "publicIpAddress": "[if(parameters('createPublicIpAddress'), createObject('id', resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName')) ),json('null') )]"
+                      "publicIpAddress": "[if(parameters('createPublicIpAddress'), createObject('id', resourceId(parameters('existingVirtualNetworkResourceGroupName'), 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName')) ),json('null') )]"
 
                       // {
                       //     "id": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
@@ -762,28 +811,34 @@
                 "name": "[parameters('publicIpAddressSku')]"
               }
             },
-            {
-              "name": "[parameters('dataDiskResources')[copyIndex()].name]",
-              "type": "Microsoft.Compute/disks",
-              "apiVersion": "2020-12-01",
-              "location": "[parameters('location')]",
-              "properties": "[parameters('dataDiskResources')[copyIndex()].properties]",
-              "sku": {
-                "name": "[parameters('dataDiskResources')[copyIndex()].sku]"
-              },
-              "copy": {
-                "name": "managedDiskResources",
-                "count": "[length(parameters('dataDiskResources'))]"
-              }
-            },
+            // {
+            //   "name": "[parameters('dataDiskResources')[copyIndex()].name]",
+            //   "type": "Microsoft.Compute/disks",
+            //   "apiVersion": "2020-12-01",
+            //   "location": "[parameters('location')]",
+            //   "properties": "[parameters('dataDiskResources')[copyIndex()].properties]",
+            //   "sku": {
+            //     "name": "[parameters('dataDiskResources')[copyIndex()].sku]"
+            //   },
+            //   "copy": {
+            //     "name": "managedDiskResources",
+            //     "count": "[length(parameters('dataDiskResources'))]"
+            //   }
+            // },
+
             {
               "name": "[parameters('virtualMachineName')]",
               "type": "Microsoft.Compute/virtualMachines",
               "apiVersion": "2021-07-01",
               "location": "[parameters('location')]",
               "dependsOn": [
-                "managedDiskResources",
+                // "managedDiskResources",
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('networkInterfaceName'))]"
+                // ,
+                // "[parameters('availabilitySetName')]"
+
+                // "[resourceId('Microsoft.Compute/availabilitySets/',parameters('availabilitySetName'))]"
+
               ],
               "properties": {
                 "hardwareProfile": {
@@ -801,24 +856,26 @@
                     "offer": "[parameters('sqlServerImageType')]",
                     "sku": "[parameters('sqlServerSku')]",
                     "version": "latest"
-                  },
-                  "copy": [
-                    {
-                      "name": "dataDisks",
-                      "count": "[length(parameters('dataDisks'))]",
-                      "input": {
-                        "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
-                        "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
-                        "caching": "[parameters('dataDisks')[copyIndex('dataDisks')].caching]",
-                        "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSizeGB]",
-                        "managedDisk": {
-                          "id": "[coalesce(parameters('dataDisks')[copyIndex('dataDisks')].id, if(equals(parameters('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', parameters('dataDisks')[copyIndex('dataDisks')].name)))]",
-                          "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].storageAccountType]"
-                        },
-                        "writeAcceleratorEnabled": "[parameters('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]"
-                      }
-                    }
-                  ]
+                  }
+                  // Everything can be on os disk
+                  // ,
+                  // "copy": [
+                  //   {
+                  //     "name": "dataDisks",
+                  //     "count": "[length(parameters('dataDisks'))]",
+                  //     "input": {
+                  //       "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
+                  //       "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
+                  //       "caching": "[parameters('dataDisks')[copyIndex('dataDisks')].caching]",
+                  //       "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].diskSizeGB]",
+                  //       "managedDisk": {
+                  //         "id": "[coalesce(parameters('dataDisks')[copyIndex('dataDisks')].id, if(equals(parameters('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', parameters('dataDisks')[copyIndex('dataDisks')].name)))]",
+                  //         "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].storageAccountType]"
+                  //       },
+                  //       "writeAcceleratorEnabled": "[parameters('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]"
+                  //     }
+                  //   }
+                  // ]
                 },
                 "networkProfile": {
                   "networkInterfaces": [
@@ -826,6 +883,9 @@
                       "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
                     }
                   ]
+                },
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
                 },
                 "osProfile": {
                   "computerName": "[parameters('virtualMachineComputerName')]",
@@ -928,7 +988,9 @@
           }
         },
         "parameters": {
-
+          "availabilitySetName" : {
+            "value" : "[parameters('availabilitySetName')]"
+          },
           "sqlServerSku": {
             "value": "[parameters('SQLServerSku')]"
           },
@@ -965,7 +1027,7 @@
             // "value": "[parameters('subnetNameForAG')]"
           },
           "virtualNetworkId": {
-            "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetwork') )]"
+            "value": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('existingVirtualNetworkResourceGroupName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('existingVirtualNetworkName') )]"
           },
           "createPublicIpAddress": {
             "value": false
@@ -988,64 +1050,61 @@
           "virtualMachineComputerName": {
             "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()]]"
           },
-          "virtualMachineRG": {
-            "value": "[resourceGroup().name]"
-          },
           "osDiskType": {
             "value": "Premium_LRS"
           },
-          "dataDisks": {
-            "value": [
-              {
-                "lun": 0,
-                "createOption": "attach",
-                "caching": "ReadOnly",
-                "writeAcceleratorEnabled": false,
-                "id": null,
-                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_0')]",
-                "storageAccountType": null,
-                "diskSizeGB": null,
-                "diskEncryptionSet": null
-              }
-              // ,
-              // {
-              //   "lun": 1,
-              //   "createOption": "attach",
-              //   "caching": "None",
-              //   "writeAcceleratorEnabled": false,
-              //   "id": null,
-              //   "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
-              //   "storageAccountType": null,
-              //   "diskSizeGB": null,
-              //   "diskEncryptionSet": null
-              // }
-            ]
-          },
-          "dataDiskResources": {
-            "value": [
-              {
-                "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_0')]",
-                "sku": "Premium_LRS",
-                "properties": {
-                  "diskSizeGB": 1024,
-                  "creationData": {
-                    "createOption": "empty"
-                  }
-                }
-              }
-              // ,
-              // {
-              //   "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
-              //   "sku": "Premium_LRS",
-              //   "properties": {
-              //     "diskSizeGB": 1024,
-              //     "creationData": {
-              //       "createOption": "empty"
-              //     }
-              //   }
-              // }
-            ]
-          },
+          // "dataDisks": {
+          //   "value": [
+          //     {
+          //       "lun": 0,
+          //       "createOption": "attach",
+          //       "caching": "ReadOnly",
+          //       "writeAcceleratorEnabled": false,
+          //       "id": null,
+          //       "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_0')]",
+          //       "storageAccountType": null,
+          //       "diskSizeGB": null,
+          //       "diskEncryptionSet": null
+          //     }
+          //     // ,
+          //     // {
+          //     //   "lun": 1,
+          //     //   "createOption": "attach",
+          //     //   "caching": "None",
+          //     //   "writeAcceleratorEnabled": false,
+          //     //   "id": null,
+          //     //   "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
+          //     //   "storageAccountType": null,
+          //     //   "diskSizeGB": null,
+          //     //   "diskEncryptionSet": null
+          //     // }
+          //   ]
+          // },
+          // "dataDiskResources": {
+          //   "value": [
+          //     {
+          //       "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_0')]",
+          //       "sku": "Premium_LRS",
+          //       "properties": {
+          //         "diskSizeGB": 1024,
+          //         "creationData": {
+          //           "createOption": "empty"
+          //         }
+          //       }
+          //     }
+          //     // ,
+          //     // {
+          //     //   "name": "[concat(parameters('VMNamesForPrimaryAndSecondaryReplicas')[copyIndex()], '_DataDisk_1')]",
+          //     //   "sku": "Premium_LRS",
+          //     //   "properties": {
+          //     //     "diskSizeGB": 1024,
+          //     //     "creationData": {
+          //     //       "createOption": "empty"
+          //     //     }
+          //     //   }
+          //     // }
+          //   ]
+          // },
           "virtualMachineSize": {
             "value": "[parameters('SizeForVirtualMachines')]"
           },
@@ -1197,6 +1256,10 @@
           //   "value": false
           //   // "[parameters('SQLSystemDbOnDataDisk')]"
           // }
+          ,
+          "existingVirtualNetworkResourceGroupName":{
+              "value" : "[parameters('existingVirtualNetworkResourceGroupName')]"
+          }
         }
       }
     },
@@ -1378,8 +1441,8 @@
               "defaultValue": "[resourceGroup().name]"
             },
             "sqlServerImageType": {
-              "allowedValues": [ "SQL2017-WS2016", "SQL2016-WS2016", "SQL2019-WS2019" ],
-              "type": "string",
+            "allowedValues": ["SQL2012-WS2012R2", "SQL2014-WS2012R2", "SQL2016-WS2012R2", "SQL2016-WS2016", "SQL2016-WS2019", "SQL2017-WS2016", "SQL2017-WS2019", "SQL2019-WS2019", "SQL2019-WS2022"],
+            "type": "string",
               "metadata": {
                 "description": "Select the version of SQL Server Image type"
               }
@@ -1454,26 +1517,26 @@
             "GroupResourceId": "[resourceId('Microsoft.SqlVirtualMachine/SqlVirtualMachineGroups', parameters('failoverClusterName'))]"
           },
           "resources": [
-            {
-              "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
-              "apiVersion": "2022-02-01-preview",
+            // {
+            //   "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+            //   "apiVersion": "2022-02-01-preview",
 
-              // "2017-03-01-preview",
-              // "name": "[trim(variables('existingVMListArray')[copyIndex()])]",
-              "name": "[trim(parameters('existingVmArray')[copyIndex()])]",
-              "location": "[parameters('location')]",
-              "copy": {
-                "name": "sqlvirtualMachineLoop",
-                // "count": "[length(variables('existingVMListArray'))]",
-                "count": "[length(parameters('existingVmArray'))]"
+            //   // "2017-03-01-preview",
+            //   // "name": "[trim(variables('existingVMListArray')[copyIndex()])]",
+            //   "name": "[trim(parameters('existingVmArray')[copyIndex()])]",
+            //   "location": "[parameters('location')]",
+            //   "copy": {
+            //     "name": "sqlvirtualMachineLoop",
+            //     // "count": "[length(variables('existingVMListArray'))]",
+            //     "count": "[length(parameters('existingVmArray'))]"
 
-              },
-              "properties": {
-                // "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(variables('existingVMListArray')[copyIndex()]))]",
-                "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(parameters('existingVmArray')[copyIndex()]))]",
-                "sqlServerLicenseType": "[parameters('sqlServerLicenseType')]"
-              }
-            },
+            //   },
+            //   "properties": {
+            //     // "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(variables('existingVMListArray')[copyIndex()]))]",
+            //     "virtualMachineResourceId": "[resourceId(parameters('existingVmResourceGroup'), 'Microsoft.Compute/virtualMachines', trim(parameters('existingVmArray')[copyIndex()]))]",
+            //     "sqlServerLicenseType": "[parameters('sqlServerLicenseType')]"
+            //   }
+            // },
             {
                //exist? cond
               "condition" : "[parameters('createNewStorageAccount')]",
@@ -1520,8 +1583,9 @@
               "name": "joincluster",
               "dependsOn": [
                 "[parameters('failoverClusterName')]",
-                "[parameters('cloudWitnessName')]",
-                "sqlvirtualMachineLoop"
+                "[parameters('cloudWitnessName')]"
+                // ,
+                // "sqlvirtualMachineLoop"
               ],
               "properties": {
                 "expressionEvaluationOptions": {
@@ -1665,6 +1729,9 @@
           "createNewStorageAccount" : {
             "value" : "[if(equals(parameters('createNewStorageAccount'), 'Yes'), true(), false())]"
             // "[parameters('createNewStorageAccount')]"
+          },
+          "existingVmResourceGroup": {
+            "value" : "[parameters('existingVirtualNetworkResourceGroupName')]"
           }
         }
       }
@@ -1826,7 +1893,7 @@
                 "description": "Specify the available private IP address for the listener from all the subnets."
               }
             },
-            "existingVnetResourcegroup": {
+            "existingVirtualNetworkResourceGroupName": {
               "defaultValue": "[resourcegroup().name]",
               "type": "string",
               "metadata": {
@@ -1909,7 +1976,7 @@
                       "count": "[length(parameters('existingVmArray'))]",
                       "input": {
                         // "sqlVirtualMachineInstanceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', variables('VmArray')[copyIndex('Replicas')] )]",
-                        "sqlVirtualMachineInstanceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', parameters('existingVmArray')[copyIndex('Replicas')] )]",                        
+                        "sqlVirtualMachineInstanceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('existingVirtualNetworkResourceGroupName'), '/providers/Microsoft.SqlVirtualMachine/sqlVirtualMachines/', parameters('existingVmArray')[copyIndex('Replicas')] )]",                        
                         // "[variables('SqlVmResourceIdList')[copyIndex('Replicas')]]",
                         "role": "[if(equals(copyIndex('Replicas'),0), 'Primary', 'Secondary')]",
                         // "failover": "Automatic",
@@ -1968,7 +2035,7 @@
             "value": "[parameters('VMNamesForPrimaryAndSecondaryReplicas')]"
           },
           "existingVnet": {
-            "value": "[parameters('virtualNetwork')]"
+            "value": "[parameters('existingVirtualNetworkName')]"
           },
           // "existingSubnet": {
           //   "value": "[parameters('subnetNameForAG')]"
@@ -1993,6 +2060,9 @@
           },
           "location" : {
             "value" : "[parameters('location')]"
+          },
+          "existingVirtualNetworkResourceGroupName" : {
+            "value" : "[parameters('existingVirtualNetworkResourceGroupName')]"
           }
         }
       }
